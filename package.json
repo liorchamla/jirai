@@ -8,7 +8,9 @@
     "frontend:dev": "pnpm --filter ./frontend dev",
     "frontend:build": "pnpm --filter ./frontend build",
     "backend:dev": "pnpm --filter ./backend dev",
-    "backend:build": "pnpm --filter ./backend build"
+    "backend:build": "pnpm --filter ./backend build",
+    "format": "pnpm -r --parallel format",
+    "lint": "pnpm -r --parallel lint"
   },
   "keywords": [],
   "author": "",
