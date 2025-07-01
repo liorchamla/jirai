@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "frontend:dev": "pnpm --filter ./frontend/front-jirai dev"
+    "frontend:dev": "pnpm --filter ./frontend dev",
+    "frontend:build": "pnpm --filter ./frontend build",
+    "backend:dev": "pnpm --filter ./backend dev",
+    "backend:build": "pnpm --filter ./backend build"
   },
   "keywords": [],
   "author": "",
