@@ -10,7 +10,11 @@
     "backend:dev": "pnpm --filter ./backend dev",
     "backend:build": "pnpm --filter ./backend build",
     "format": "pnpm -r --parallel format",
-    "lint": "pnpm -r --parallel lint"
+    "lint": "pnpm -r --parallel lint",
+    "prisma:validate": "pnpm --filter ./backend prisma validate",
+    "prisma:generate": "pnpm --filter ./backend prisma generate",
+    "prisma:push": "pnpm --filter ./backend prisma db push",
+    "build": "pnpm -r --parallel build"
   },
   "keywords": [],
   "author": "",
