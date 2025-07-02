@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.10.0
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check code formatting
+        run: |
+          pnpm format
+          if ! git diff --exit-code; then
+            echo "❌ Code is not properly formatted. Please run 'pnpm format' locally."
+            exit 1
+          else
+            echo "✅ Code is properly formatted"
+          fi
+
+      - name: Run linter
+        run: pnpm lint
+
+      - name: Run tests
+        run: |
+          if pnpm test --help >/dev/null 2>&1; then
+            echo "🧪 Running tests..."
+            pnpm test
+          else
+            echo "⚠️ No tests found - skipping test step"
+          fi
+
+      - name: Validate Prisma schema
+        env:
+          DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
+        run: pnpm prisma:validate
+
+      - name: Generate Prisma client
+        env:
+          DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
+        run: pnpm prisma:generate
+
+      - name: Build project
+        run: pnpm build

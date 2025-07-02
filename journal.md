@@ -30,3 +30,18 @@
 - Création d'un fichier `docker-compose.yml` à la racine pour PostgreSQL.
 - Configuration des variables d'environnement pour correspondre au conteneur.
 - Documentation pour lancer la base avec Docker (`docker compose up -d`).
+
+## 5. Mise en place du CI avec GitHub Actions
+
+- Création du workflow CI dans `.github/workflows/ci.yml`.
+- Configuration du déclenchement automatique sur les pushs vers `main` et les pull requests.
+- Mise en place des étapes suivantes dans le pipeline :
+  - Installation des dépendances avec cache pnpm optimisé
+  - Exécution du formatage automatique (`pnpm format`)
+  - Vérification que le code est correctement formaté (fail si non formaté)
+  - Lancement du linter (`pnpm lint`) pour s'assurer de la qualité du code
+  - Exécution des tests (avec détection automatique si configurés)
+  - Validation du schéma Prisma (`pnpm prisma:validate`)
+  - Génération du client Prisma (`pnpm prisma:generate`)
+  - Build complet du projet (`pnpm build`)
+- Ajout d'un badge de statut CI dans le README pour visualiser l'état du build.
