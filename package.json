@@ -14,6 +14,8 @@
     "prisma:validate": "pnpm --filter ./backend exec prisma validate",
     "prisma:generate": "pnpm --filter ./backend exec prisma generate",
     "prisma:push": "pnpm --filter ./backend exec prisma db push",
+    "docker:up": "docker-compose up -d",
+    "docker:stop": "docker-compose stop",
     "build": "pnpm -r --parallel build"
   },
   "keywords": [],
