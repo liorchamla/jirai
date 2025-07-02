@@ -1,6 +1,6 @@
 ## Cahier des charges - Projet "JirAI" ✨🧠🛠️
 
-![CI](https://github.com/VincentDelaye/jirai/workflows/CI/badge.svg)
+![CI](https://github.com/liorchamla/jirai/workflows/CI/badge.svg)
 
 ### 1. Présentation générale 📌📋📈
 
