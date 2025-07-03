@@ -46,10 +46,18 @@
   - Build complet du projet (`pnpm build`)
 - Ajout d'un badge de statut CI dans le README pour visualiser l'état du build.
 
-## 5. Mise en place de l'excution des tests unitaires
+## 6. Mise en place de l'exécution des tests unitaires
 
 - Nous avons choisi Vitest car plus rapide que Jest il est compatible avec TypeScript et supporte ESM natif.
-- Installation de Vitest dans chaques packages avec `pnpm add -D vitest`.
-- Mise en de test factisse dans chaques packages.
-- Exécution des tests dans cahques packages (`pnpm test`).
-- Mise en place d'un script pour pouvoir excuter les tests de chaques packages (`pnpm test, pnpm backend:test, pnpm fontend:test`).
+- Installation de Vitest dans chaque package avec `pnpm add -D vitest`.
+- Mise en place de tests factice dans chaque package.
+- Exécution des tests dans chaque package (`pnpm test`).
+- Mise en place d'un script pour pouvoir excuter les tests de chaque package (`pnpm test, pnpm backend:test, pnpm fontend:test`).
+
+## 7. Mise en place des tests end-to-end (e2e)
+
+- Nous avons choisi Cypress car nous utilisons un projet moderne frontend et un CI/CD très bien supporté.
+- Création d'un dossier `e2e` à la racine du projet.
+- Initialisation d'un projet Node.js dans ce dossier.
+- Installation de Cypress dans ce dossier `pnpm add -D cypress`.
+- Premier lancement de Cypress avec `pnpx cypress open` : création automatique de la structure de dossiers `cypress/` dans `e2e` et ouverture de l'interface graphique.

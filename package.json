@@ -18,7 +18,10 @@
     "prisma:push": "pnpm --filter ./backend exec prisma db push",
     "docker:up": "docker-compose up -d",
     "docker:stop": "docker-compose stop",
-    "build": "pnpm -r --parallel build"
+    "build": "pnpm -r --parallel build",
+    "frontend:preview": "pnpm --filter ./frontend preview",
+    "e2e:run": "pnpm --filter e2e cypress:run",
+    "e2e:open": "pnpm --filter e2e cypress:open"
   },
   "keywords": [],
   "author": "",
