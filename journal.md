@@ -45,3 +45,11 @@
   - Génération du client Prisma (`pnpm prisma:generate`)
   - Build complet du projet (`pnpm build`)
 - Ajout d'un badge de statut CI dans le README pour visualiser l'état du build.
+
+## 5. Mise en place de l'excution des tests unitaires
+
+- Nous avons choisi Vitest car plus rapide que Jest il est compatible avec TypeScript et supporte ESM natif.
+- Installation de Vitest dans chaques packages avec `pnpm add -D vitest`.
+- Mise en de test factisse dans chaques packages.
+- Exécution des tests dans cahques packages (`pnpm test`).
+- Mise en place d'un script pour pouvoir excuter les tests de chaques packages (`pnpm test, pnpm backend:test, pnpm fontend:test`).
