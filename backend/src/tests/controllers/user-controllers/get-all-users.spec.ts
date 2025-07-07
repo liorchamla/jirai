@@ -7,6 +7,7 @@ describe("getAllUsers", () => {
   beforeEach(async () => {
     // Clear the users table before each test
     await prisma.user.deleteMany({});
+    vi.clearAllMocks();
   });
 
   afterAll(async () => {
