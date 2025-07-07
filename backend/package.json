@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "dotenv -e .env.test -- vitest",
+    "test": "dotenv -e .env.test -- prisma generate && dotenv -e .env.test -- vitest",
     "dev": "tsx --watch src/index.ts",
     "lint": "eslint .",
     "build": "prisma generate && tsc",
@@ -41,6 +41,7 @@
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-mock-express": "^2.2.0"
   }
 }
