@@ -50,7 +50,7 @@ export async function getUserById(req: Request, res: Response) {
 export async function createUser(req: Request, res: Response) {
   const result = createUserSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ error: result.error.errors });
+    res.status(422).json({ error: result.error.errors });
     return;
   }
 
@@ -62,7 +62,7 @@ export async function createUser(req: Request, res: Response) {
   });
 
   if (existingEmailUser) {
-    res.status(400).json({ error: "Email already in use" });
+    res.status(409).json({ error: "Email already in use" });
     return;
   }
 
@@ -71,7 +71,7 @@ export async function createUser(req: Request, res: Response) {
   });
 
   if (existingUsernameUser) {
-    res.status(400).json({ error: "Username already in use" });
+    res.status(409).json({ error: "Username already in use" });
     return;
   }
 
@@ -93,7 +93,7 @@ export async function createUser(req: Request, res: Response) {
 export async function userLogin(req: Request, res: Response) {
   const result = userLoginSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ error: result.error.errors });
+    res.status(422).json({ error: result.error.errors });
     return;
   }
 
@@ -112,13 +112,13 @@ export async function userLogin(req: Request, res: Response) {
     },
   });
   if (!user) {
-    res.status(404).json({ error: "Invalid email or password" });
+    res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
   const validPassword = await argon2.verify(user.password, password);
   if (!validPassword) {
-    res.status(404).json({ error: "Invalid email or password" });
+    res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
