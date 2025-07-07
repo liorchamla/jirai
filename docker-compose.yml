@@ -8,9 +8,10 @@ services:
       POSTGRES_PASSWORD: jirai_p
       POSTGRES_DB: jirai_d
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./backend/db-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "jirai_u", "-d", "jirai_d"]
       interval: 10s
