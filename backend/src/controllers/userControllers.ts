@@ -48,24 +48,17 @@ export async function getUserById(req: Request, res: Response) {
 // ============================================================
 
 export async function createUser(req: Request, res: Response) {
-  const newUser = createUserSchema.safeParse(req.body);
-  if (!newUser.success) {
-    res.status(400).json({ error: newUser.error.errors });
+  const result = createUserSchema.safeParse(req.body);
+  if (!result.success) {
+    res.status(400).json({ error: result.error.errors });
     return;
   }
 
-  if (newUser.data.password !== newUser.data["confirm-password"]) {
-    res.status(400).json({ error: "Passwords do not match" });
-    return;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { "confirm-password": _, ...userData } = newUser.data;
-
-  const hashedPassword = await argon2.hash(userData.password);
-  userData.password = hashedPassword;
+  const hashedPassword = await argon2.hash(result.data.password);
+  result.data.password = hashedPassword;
 
   const existingEmailUser = await prisma.user.findUnique({
-    where: { email: userData.email },
+    where: { email: result.data.email },
   });
 
   if (existingEmailUser) {
@@ -74,7 +67,7 @@ export async function createUser(req: Request, res: Response) {
   }
 
   const existingUsernameUser = await prisma.user.findFirst({
-    where: { username: userData.username },
+    where: { username: result.data.username },
   });
 
   if (existingUsernameUser) {
@@ -84,7 +77,7 @@ export async function createUser(req: Request, res: Response) {
 
   try {
     const user = await prisma.user.create({
-      data: userData,
+      data: result.data,
     });
     res.status(201).json(user);
   } catch (error) {
@@ -166,20 +159,36 @@ export async function updateUser(req: Request, res: Response) {
   }
 
   if (result.data.password) {
-    if (result.data.password !== result.data["confirm-password"]) {
-      res.status(400).json({ error: "Passwords do not match" });
-      return;
-    }
     const hashedPassword = await argon2.hash(result.data.password);
     result.data.password = hashedPassword;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { "confirm-password": _, ...userData } = result.data;
+
+  if (result.data.email) {
+    const existingEmailUser = await prisma.user.findUnique({
+      where: { email: result.data.email },
+    });
+
+    if (existingEmailUser) {
+      res.status(400).json({ error: "Email already in use" });
+      return;
+    }
+  }
+
+  if (result.data.username) {
+    const existingUsernameUser = await prisma.user.findFirst({
+      where: { username: result.data.username },
+    });
+
+    if (existingUsernameUser) {
+      res.status(400).json({ error: "Username already in use" });
+      return;
+    }
+  }
 
   try {
     const updatedUser = await prisma.user.update({
       where: { uuid },
-      data: userData,
+      data: result.data,
     });
 
     res

@@ -18,7 +18,6 @@ export const createUserSchema = z.object({
     .refine((val) => /[^a-zA-Z0-9]/.test(val), {
       message: "Password must contain at least one special character",
     }),
-  "confirm-password": z.string({ message: "Confirm password is required" }),
 });
 
 export const userLoginSchema = z.object({
@@ -30,10 +29,6 @@ export const userLoginSchema = z.object({
 
 export const userUpdateSchema = createUserSchema.partial();
 
-export const createUserOnCommandSchema = createUserSchema
-  .omit({
-    "confirm-password": true,
-  })
-  .extend({
-    position: z.string({ message: "Position is required" }),
-  });
+export const createUserOnCommandSchema = createUserSchema.extend({
+  position: z.string({ message: "Position is required" }),
+});
