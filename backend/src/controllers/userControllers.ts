@@ -154,7 +154,7 @@ export async function updateUser(req: Request, res: Response) {
 
   const result = userUpdateSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ error: result.error.errors });
+    res.status(422).json({ error: result.error.errors });
     return;
   }
 
