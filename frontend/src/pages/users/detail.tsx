@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import users from "../../data-test/users";
 
 function UserDetail() {
-  const { username } = useParams();
-  const user = users.find((u) => u.username === username);
+  const { uuid } = useParams();
+  const user = users.find((u) => u.uuid === uuid);
 
   return (
     <div className="flex justify-center items-center">
@@ -29,7 +29,7 @@ function UserDetail() {
             )}
             {user.position && (
               <div className="flex flex-col">
-                <span className="text-2xl">Poste</span>
+                <span className="text-2xl">Position</span>
                 <span className="text-lg font-medium text-gray-500 mb-4">
                   {user.position}
                 </span>

@@ -10,12 +10,12 @@ function App() {
   return (
     <>
       <Header />
-      <main className="app-container">
+      <main>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/users" element={<UsersList />} />
           <Route path="/projects" element={<ProjectsList />} />
-          <Route path="/users/:username" element={<UserDetail />} />
+          <Route path="/users/:uuid" element={<UserDetail />} />
         </Routes>
       </main>
     </>
