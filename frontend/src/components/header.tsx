@@ -16,9 +16,9 @@ function Header() {
   ];
   const start = (
     <Link to="/">
-      <h1 className="text-4xl font-bold mr-[2rem] ml-[1rem] bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
-        JirAi
-      </h1>
+      <span className="text-4xl font-bold mr-[2rem] ml-[1rem] bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
+        JirAI
+      </span>
     </Link>
   );
   return (

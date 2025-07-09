@@ -1,6 +1,5 @@
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { Link } from "react-router-dom";
 
 function Login() {
   return (
@@ -25,9 +24,6 @@ function Login() {
           />
         </div>
         <Button label="Se connecter" />
-        <Link to="/users" className="btn btn-secondary text-center">
-          Go to User List
-        </Link>
       </div>
     </div>
   );

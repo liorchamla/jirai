@@ -3,14 +3,14 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Link } from "react-router-dom";
 
-interface Project {
-  project: string;
+interface NameProject {
+  name: string;
 }
 
 function ProjectsList() {
-  const projects: Project[] = [
-    { project: "Project A" },
-    { project: "Project B" },
+  const projects: NameProject[] = [
+    { name: "Project A" },
+    { name: "Project B" },
   ];
 
   return (
@@ -25,7 +25,7 @@ function ProjectsList() {
         />
       </div>
       <DataTable value={projects}>
-        <Column field="project" header="Project" />
+        <Column field="name" header="Project" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">
         Go to Login

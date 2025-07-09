@@ -1,13 +1,12 @@
 describe("Mon premier test", () => {
   it("should show homepage", () => {
     cy.visit("http://localhost:5173");
-    cy.contains("Salut les devs");
+    cy.contains("JirAI");
   });
-  it("should increment counter", () => {
+  it("should have a list to click on users", () => {
     cy.visit("http://localhost:5173");
-    cy.get("button[data-cy=increment-button]")
-      .contains("count is 0")
-      .click()
-      .contains("count is 1");
+    cy.contains("Users").click();
+    cy.url().should("eq", "http://localhost:5173/users");
+    cy.contains("Liste des utilisateurs");
   });
 });

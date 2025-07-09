@@ -12,11 +12,23 @@ import users from "../../data-test/users";
 function UsersList() {
   let navigate = useNavigate();
 
+  function handleDelete(user: User) {
+    if (
+      window.confirm(
+        `Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.username} ?`
+      )
+    ) {
+      window.alert(
+        `L'utilisateur ${user.username} a été supprimé avec succès.`
+      );
+    }
+  }
+
   const getUserActions = (user: User) => {
     return (
       <>
         <Button
-          onClick={() => navigate(`/users/${user.username}`)}
+          onClick={() => navigate(`/users/${user.uuid}`)}
           icon="pi pi-eye"
           severity="info"
           text
@@ -30,15 +42,21 @@ function UsersList() {
           severity="success"
           text
         />
-        <Button icon="pi pi-times" severity="danger" className="ml-2" text />
+        <Button
+          icon="pi pi-times"
+          severity="danger"
+          onClick={() => handleDelete(user)}
+          className="ml-2"
+          text
+        />
       </>
     );
   };
 
   const getUserTeam = (user: User) => {
-    return user.teams.map((team, index) => (
+    return user.teams.map((team) => (
       <Tag
-        key={index}
+        key={team.name}
         value={team.name}
         severity="secondary"
         className="mr-2"

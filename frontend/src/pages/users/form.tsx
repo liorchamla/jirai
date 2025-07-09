@@ -94,7 +94,7 @@ function UserForm({ user, onSubmit }: PropsType) {
         onChange={(e) => setConfirmPassword(e.target.value)}
         className="mb-4"
       />
-      <Button label="Ajouter" type="submit" />
+      <Button label={user ? "Enregistrer" : "Ajouter"} type="submit" />
     </form>
   );
 }
