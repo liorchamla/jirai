@@ -1,11 +1,29 @@
-import { Button } from "primereact/button";
+import { Menubar } from "primereact/menubar";
+import { Link } from "react-router-dom";
 
 function Header() {
+  const items = [
+    {
+      label: "Projects",
+      icon: "pi pi-folder",
+      url: "/projects",
+    },
+    {
+      label: "Users",
+      icon: "pi pi-users",
+      url: "/users",
+    },
+  ];
+  const start = (
+    <Link to="/">
+      <h1 className="text-4xl font-bold mr-[2rem] ml-[1rem] bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
+        JirAi
+      </h1>
+    </Link>
+  );
   return (
     <header>
-      <h1>Salut les devs</h1>
-      <Button label="Click Me" />
-      <i className="pi pi-user"></i>
+      <Menubar model={items} start={start} />
     </header>
   );
 }
