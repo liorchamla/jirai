@@ -5,3 +5,9 @@ export interface User {
   position: string;
   teams: { name: string }[];
 }
+
+export interface JwtPayload {
+  uuid: string;
+  username: string;
+  email: string;
+}
