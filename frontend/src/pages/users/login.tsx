@@ -1,29 +1,69 @@
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { Message } from "primereact/message";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import wretch from "wretch";
+
+const api = wretch("http://localhost:3000/api/v1", { mode: "cors" }).errorType(
+  "json"
+);
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [error, setError] = useState<string | null>(null);
+
+  let navigate = useNavigate();
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    try {
+      const response = await api
+        .url("/login")
+        .post({ email, password })
+        .json<{ token: string }>();
+      window.localStorage.setItem("token", response.token);
+      navigate("/users");
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error("Login error:", error);
+      setError("Login failed. Please check your credentials.");
+    }
+  }
+
   return (
     <div className="mt-[10rem] mb-auto flex justify-center items-center">
       <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] w-[30rem]">
-        <h2 className="text-3xl font-bold text-center mb-[1rem]">Login</h2>
-        <div className="flex flex-col items-start w-full gap-3">
-          <label htmlFor="username">Entrez votre nom d&apos;utilisateur</label>
-          <InputText
-            className="w-full"
-            id="username"
-            placeholder="Nom d'utilisateur"
-          />
-        </div>
-        <div className="flex flex-col items-start w-full gap-3">
-          <label htmlFor="password">Entrez votre mot de passe</label>
-          <InputText
-            className="w-full"
-            id="password"
-            placeholder="Mot de passe"
-            type="password"
-          />
-        </div>
-        <Button label="Se connecter" />
+        <form onSubmit={handleSubmit}>
+          <h2 className="text-3xl font-bold text-center mb-[1rem]">Login</h2>
+          {error && (
+            <Message severity="error" text={error} className="w-full" />
+          )}
+          <div className="flex flex-col items-start w-full gap-3">
+            <label htmlFor="email">Entrez votre adresse e-mail</label>
+            <InputText
+              className="w-full"
+              id="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col items-start w-full gap-3">
+            <label htmlFor="password">Entrez votre mot de passe</label>
+            <InputText
+              className="w-full"
+              id="password"
+              placeholder="Mot de passe"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <Button label="Se connecter" />
+        </form>
       </div>
     </div>
   );
