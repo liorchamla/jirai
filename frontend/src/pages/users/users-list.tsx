@@ -1,18 +1,35 @@
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Tag } from "primereact/tag";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserForm from "./form";
 import type { User } from "../../types/user";
-import users from "../../data-test/users";
+import { api } from "../../utils/api";
+import { getToken } from "../../utils/auth";
 
 function UsersList() {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [updateVisible, setUpdateVisible] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
+  const [users, setUsers] = useState<User[]>([]);
+
   let navigate = useNavigate();
 
-  function handleDelete(user: User) {
+  useEffect(() => {
+    async function fetchUsers() {
+      const token = getToken();
+      const result: { users: User[] } = await api
+        .headers({ Authorization: `Bearer ${token}` })
+        .get("/users")
+        .json();
+      setUsers(result.users);
+    }
+    fetchUsers();
+  }, []);
+
+  const handleDelete = (user: User) => {
     if (
       window.confirm(
         `Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.username} ?`
@@ -22,7 +39,7 @@ function UsersList() {
         `L'utilisateur ${user.username} a été supprimé avec succès.`
       );
     }
-  }
+  };
 
   const getUserActions = (user: User) => {
     return (
@@ -53,17 +70,6 @@ function UsersList() {
     );
   };
 
-  const getUserTeam = (user: User) => {
-    return user.teams.map((team) => (
-      <Tag
-        key={team.name}
-        value={team.name}
-        severity="secondary"
-        className="mr-2"
-      />
-    ));
-  };
-
   const getUserEmail = (user: User) => {
     return (
       <div className="flex items-center gap-2">
@@ -73,9 +79,6 @@ function UsersList() {
     );
   };
 
-  const [visible, setVisible] = useState<boolean>(false);
-  const [updateVisible, setUpdateVisible] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -116,7 +119,6 @@ function UsersList() {
         <Column field="username" header="Username" />
         <Column body={getUserEmail} header="Email" />
         <Column field="position" header="Position" />
-        <Column body={getUserTeam} header="Team" />
         <Column body={getUserActions} header="Actions" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">

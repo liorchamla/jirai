@@ -3,11 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import wretch from "wretch";
-
-const api = wretch("http://localhost:3000/api/v1", { mode: "cors" }).errorType(
-  "json"
-);
+import { api } from "../../utils/api";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -39,9 +35,9 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <h2 className="text-3xl font-bold text-center mb-[1rem]">Login</h2>
           {error && (
-            <Message severity="error" text={error} className="w-full" />
+            <Message severity="error" text={error} className="w-full mb-5" />
           )}
-          <div className="flex flex-col items-start w-full gap-3">
+          <div className="flex flex-col items-start w-full gap-3 mb-5 mt-5">
             <label htmlFor="email">Entrez votre adresse e-mail</label>
             <InputText
               className="w-full"
@@ -51,7 +47,7 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="flex flex-col items-start w-full gap-3">
+          <div className="flex flex-col items-start w-full gap-3 mb-5">
             <label htmlFor="password">Entrez votre mot de passe</label>
             <InputText
               className="w-full"
