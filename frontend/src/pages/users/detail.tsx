@@ -1,9 +1,24 @@
 import { useParams } from "react-router-dom";
-import users from "../../data-test/users";
+import { useEffect, useState } from "react";
+import { getToken } from "../../utils/auth";
+import type { User } from "../../types/user";
+import { api } from "../../utils/api";
 
 function UserDetail() {
+  const [user, setUser] = useState<User>();
+
   const { uuid } = useParams();
-  const user = users.find((u) => u.uuid === uuid);
+  useEffect(() => {
+    async function fetchUser() {
+      const token = getToken();
+      const result: User = await api
+        .headers({ Authorization: `Bearer ${token}` })
+        .get(`/users/${uuid}`)
+        .json();
+      setUser(result);
+    }
+    fetchUser();
+  }, []);
 
   return (
     <div className="flex justify-center items-center">

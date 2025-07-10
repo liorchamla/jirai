@@ -1,4 +1,5 @@
 import type { JwtPayload } from "../types/user";
+import { jwtDecode } from "jwt-decode";
 
 export function getToken(): string | null {
   return window.localStorage.getItem("token");
@@ -6,9 +7,8 @@ export function getToken(): string | null {
 
 export function decodeToken(token: string): JwtPayload | null {
   try {
-    const payload = token.split(".")[1];
-    const decoded = window.atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(decoded);
+    const decoded = jwtDecode(token);
+    return decoded as JwtPayload;
   } catch {
     return null;
   }
