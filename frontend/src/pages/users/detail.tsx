@@ -8,15 +8,16 @@ function UserDetail() {
   const [user, setUser] = useState<User>();
 
   const { uuid } = useParams();
+  async function fetchUser() {
+    const token = getToken();
+    const result: User = await api
+      .headers({ Authorization: `Bearer ${token}` })
+      .get(`/users/${uuid}`)
+      .json();
+    setUser(result);
+  }
+
   useEffect(() => {
-    async function fetchUser() {
-      const token = getToken();
-      const result: User = await api
-        .headers({ Authorization: `Bearer ${token}` })
-        .get(`/users/${uuid}`)
-        .json();
-      setUser(result);
-    }
     fetchUser();
   }, []);
 
