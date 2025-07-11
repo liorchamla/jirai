@@ -42,6 +42,6 @@ export function authenticateToken(
     next();
   } catch {
     // Si le token est invalide ou expiré, on renvoie une erreur
-    res.status(403).json({ error: "Invalid or expired token" });
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 }

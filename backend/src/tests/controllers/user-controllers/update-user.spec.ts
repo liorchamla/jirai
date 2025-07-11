@@ -59,21 +59,25 @@ describe("updateUser", () => {
   it("should return 400 if email already exists", async () => {
     // setup
     const hashedPassword = await argon2.hash("Password123@");
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: "existinguser",
         email: "existinguser@example.com",
         password: hashedPassword,
       },
     });
-    const user = await prisma.user.findUnique({
-      where: { email: "existinguser@example.com" },
+    await prisma.user.create({
+      data: {
+        username: "anotheruser",
+        email: "anotheruser@example.com",
+        password: hashedPassword,
+      },
     });
     const req = {
       params: { uuid: user.uuid },
       body: {
         username: "testuser",
-        email: "existinguser@example.com",
+        email: "anotheruser@example.com",
         password: "Password123@",
       },
     } as unknown as Request;

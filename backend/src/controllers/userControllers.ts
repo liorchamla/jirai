@@ -165,7 +165,7 @@ export async function updateUser(req: Request, res: Response) {
 
   if (result.data.email) {
     const existingEmailUser = await prisma.user.findUnique({
-      where: { email: result.data.email },
+      where: { email: result.data.email, NOT: { uuid } },
     });
 
     if (existingEmailUser) {
@@ -176,7 +176,7 @@ export async function updateUser(req: Request, res: Response) {
 
   if (result.data.username) {
     const existingUsernameUser = await prisma.user.findFirst({
-      where: { username: result.data.username },
+      where: { username: result.data.username, NOT: { uuid } },
     });
 
     if (existingUsernameUser) {
