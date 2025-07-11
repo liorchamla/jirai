@@ -6,6 +6,7 @@ export const createUserSchema = z.object({
     .min(2, { message: "Username must be at least 2 characters long" })
     .max(100, { message: "Username must be at most 100 characters long" }),
   email: z.string({ message: "Email is required" }).email(),
+  position: z.string().max(600).optional(),
   password: z
     .string({ message: "Password is required" })
     .min(8, { message: "Password must be at least 8 characters long" })
