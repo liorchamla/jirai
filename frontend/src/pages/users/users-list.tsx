@@ -17,15 +17,16 @@ function UsersList() {
 
   let navigate = useNavigate();
 
+  const fetchUsers = async () => {
+    const token = getToken();
+    const result: { users: User[] } = await api
+      .headers({ Authorization: `Bearer ${token}` })
+      .get("/users")
+      .json();
+    setUsers(result.users);
+  };
+
   useEffect(() => {
-    async function fetchUsers() {
-      const token = getToken();
-      const result: { users: User[] } = await api
-        .headers({ Authorization: `Bearer ${token}` })
-        .get("/users")
-        .json();
-      setUsers(result.users);
-    }
     fetchUsers();
   }, []);
 
@@ -98,7 +99,12 @@ function UsersList() {
             setVisible(false);
           }}
         >
-          <UserForm onSubmit={() => setVisible(false)} />
+          <UserForm
+            onSubmit={() => {
+              setVisible(false);
+              fetchUsers();
+            }}
+          />
         </Dialog>
         <Dialog
           header="Modifier utilisateur"
@@ -111,7 +117,10 @@ function UsersList() {
         >
           <UserForm
             user={selectedUser}
-            onSubmit={() => setUpdateVisible(false)}
+            onSubmit={() => {
+              setUpdateVisible(false);
+              fetchUsers();
+            }}
           />
         </Dialog>
       </div>

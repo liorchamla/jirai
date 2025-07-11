@@ -6,6 +6,11 @@ import {
 } from "primereact/multiselect";
 import { useState, type FormEvent } from "react";
 import type { User } from "../../types/user";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../utils/api";
+import { getToken } from "../../utils/auth";
+import { Message } from "primereact/message";
+import type { WretchError } from "wretch";
 
 interface Teams {
   name: string;
@@ -23,11 +28,136 @@ function UserForm({ user, onSubmit }: PropsType) {
   const [userTeams, setUserTeams] = useState<Teams[]>(user?.teams || []);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [errorUsername, setErrorUsername] = useState<string[]>([]);
+  const [errorEmail, setErrorEmail] = useState<string[]>([]);
+  const [errorPosition, setErrorPosition] = useState<string[]>([]);
+  const [errorPassword, setErrorPassword] = useState<string[]>([]);
+  const [errorPasswordConfirm, setErrorPasswordConfirm] = useState<
+    string | null
+  >(null);
 
-  const handleSubmit = (event: FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    onSubmit();
+    setErrorUsername(() => []);
+    setErrorEmail(() => []);
+    setErrorPosition(() => []);
+    setErrorPassword(() => []);
+    setErrorPasswordConfirm(null);
+    setError(null);
+    if (!user) {
+      if (password !== confirmPassword) {
+        setErrorPasswordConfirm("Les mots de passe ne correspondent pas.");
+        return;
+      }
+      try {
+        createNewUser();
+      } catch (error) {
+        // eslint-disable-next-line
+        console.error(error);
+        setError(
+          "Une erreur s'est produite lors de la création de l'utilisateur."
+        );
+      }
+    } else {
+      if (password !== confirmPassword) {
+        setErrorPasswordConfirm("Les mots de passe ne correspondent pas.");
+        return;
+      }
+      try {
+        updateUser();
+      } catch (error) {
+        // eslint-disable-next-line
+        console.error(error);
+        setError(
+          "Une erreur s'est produite lors de la création de l'utilisateur."
+        );
+      }
+    }
   };
+
+  async function createNewUser() {
+    const token = getToken();
+
+    api
+      .headers({ Authorization: `Bearer ${token}` })
+      .url("/users")
+      .post({ username, email, position, password })
+      .unauthorized(() => {
+        navigate("/login");
+      })
+      .error(409, (err) => {
+        setError(() => err.json.error);
+      })
+      .error(422, (err) => {
+        handleApiError(err);
+      })
+      .json()
+      .then((result) => {
+        if (result) {
+          onSubmit();
+        }
+      });
+  }
+
+  async function updateUser() {
+    if (!user) {
+      return;
+    }
+
+    const token = getToken();
+
+    const body: {
+      username: string;
+      email: string;
+      position: string;
+      password?: string;
+    } = {
+      username,
+      email,
+      position,
+    };
+
+    if (password) {
+      body.password = password;
+    }
+
+    api
+      .headers({ Authorization: `Bearer ${token}` })
+      .url("/users/" + user.uuid)
+      .patch(body)
+      .unauthorized(() => {
+        navigate("/login");
+      })
+      .error(409, (err) => {
+        setError(() => err.json.error);
+      })
+      .error(422, (err) => {
+        handleApiError(err);
+      })
+      .json()
+      .then((result) => {
+        if (result) {
+          onSubmit();
+        }
+      });
+  }
+
+  function handleApiError(err: WretchError) {
+    err.json.error.forEach((error: { path: string[]; message: string }) => {
+      if (error.path[0] === "username") {
+        setErrorUsername((errorUsername) => [...errorUsername, error.message]);
+      }
+      if (error.path[0] === "email") {
+        setErrorEmail((errorEmail) => [...errorEmail, error.message]);
+      }
+      if (error.path[0] === "password") {
+        setErrorPassword((errorPassword) => [...errorPassword, error.message]);
+      }
+    });
+  }
 
   const teams: Teams[] = [
     { name: "Web dev" },
@@ -48,6 +178,13 @@ function UserForm({ user, onSubmit }: PropsType) {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
+      {errorUsername.length > 0 && (
+        <Message
+          severity="error"
+          text={errorUsername.join(", ")}
+          className="w-full mb-5"
+        />
+      )}
       <label htmlFor="email">Email</label>
       <InputText
         id="email"
@@ -55,7 +192,15 @@ function UserForm({ user, onSubmit }: PropsType) {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        invalid={errorEmail.length > 0}
       />
+      {errorEmail.length > 0 && (
+        <Message
+          severity="error"
+          text={errorEmail.join(", ")}
+          className="w-full mb-5"
+        />
+      )}
       <label htmlFor="position">Position</label>
       <InputText
         id="position"
@@ -64,6 +209,13 @@ function UserForm({ user, onSubmit }: PropsType) {
         value={position}
         onChange={(e) => setPosition(e.target.value)}
       />
+      {errorPosition.length > 0 && (
+        <Message
+          severity="error"
+          text={errorPosition.join(", ")}
+          className="w-full mb-5"
+        />
+      )}
       <label htmlFor="teams">Équipes</label>
       <MultiSelect
         id="teams"
@@ -76,6 +228,13 @@ function UserForm({ user, onSubmit }: PropsType) {
         placeholder="Équipes"
         className="mb-4"
       />
+      {errorPasswordConfirm && (
+        <Message
+          severity="error"
+          text={errorPasswordConfirm}
+          className="w-full mb-5"
+        />
+      )}
       <label htmlFor="password">Mot de passe</label>
       <InputText
         id="password"
@@ -94,6 +253,16 @@ function UserForm({ user, onSubmit }: PropsType) {
         onChange={(e) => setConfirmPassword(e.target.value)}
         className="mb-4"
       />
+      {errorPassword.length > 0 && (
+        <Message
+          severity="error"
+          text={errorPassword.join(", ")}
+          className="w-full mb-5"
+        />
+      )}
+      {error && (
+        <Message severity="error" text={error} className="w-full mb-5" />
+      )}
       <Button label={user ? "Enregistrer" : "Ajouter"} type="submit" />
     </form>
   );

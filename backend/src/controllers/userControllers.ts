@@ -14,7 +14,9 @@ import jwt from "jsonwebtoken";
 
 export async function getAllUsers(req: Request, res: Response) {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      orderBy: [{ updatedAt: "desc" }],
+    });
     res.status(200).json({ users });
   } catch (error) {
     console.error("Error fetching users:", error);
