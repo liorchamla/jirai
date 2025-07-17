@@ -30,15 +30,24 @@ function UsersList() {
     fetchUsers();
   }, []);
 
-  const handleDelete = (user: User) => {
+  const handleDelete = async (user: User) => {
     if (
       window.confirm(
         `Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.username} ?`
       )
     ) {
-      window.alert(
-        `L'utilisateur ${user.username} a été supprimé avec succès.`
-      );
+      const token = getToken();
+      try {
+        await api
+          .headers({ Authorization: `Bearer ${token}` })
+          .delete(`/users/${user.uuid}`);
+        window.alert(
+          `L'utilisateur ${user.username} a été supprimé avec succès.`
+        );
+        fetchUsers(); // Rafraîchir la liste
+      } catch {
+        window.alert("Erreur lors de la suppression de l'utilisateur.");
+      }
     }
   };
 
