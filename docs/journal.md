@@ -61,3 +61,25 @@
 - Initialisation d'un projet Node.js dans ce dossier.
 - Installation de Cypress dans ce dossier `pnpm add -D cypress`.
 - Premier lancement de Cypress avec `pnpx cypress open` : création automatique de la structure de dossiers `cypress/` dans `e2e` et ouverture de l'interface graphique.
+
+## 8. Backend : Implémentation du CRUD utilisateur\*\*
+
+- Création des routes REST pour les utilisateurs (création, lecture, mise à jour, suppression) dans `backend/src/routes/user.router.ts`.
+- Développement des contrôleurs associés dans `backend/src/controllers/userControllers.ts`.
+- Mise en place des schémas de validation (ex : `usersSchema.ts`).
+- Ajout de la gestion de l’authentification (middleware `auth.ts`).
+- Rédaction de tests unitaires pour chaque endpoint utilisateur.
+
+## 9. Frontend : pages utilisateurs et authentification\*\*
+
+- Création de la page de login (`frontend/src/pages/users/login.tsx`).
+- Développement de la page de liste des utilisateurs (`frontend/src/pages/users/users-list.tsx`).
+- Création de la page de détail utilisateur (`frontend/src/pages/users/detail.tsx`).
+- Intégration d’un formulaire de création/modification utilisateur (`frontend/src/pages/users/form.tsx`).
+- Utilisation de wretch (`frontend/src/utils/api.ts`) pour connecter le frontend au backend et consommer l’API REST.
+
+## 10. Connexion frontend-backend\*\*
+
+- Configuration de wretch pour pointer vers l’API backend.
+- Gestion des appels API pour l’authentification, la récupération, la création, la modification et la suppression d’utilisateurs.
+- Affichage dynamique des données utilisateurs dans le frontend.
