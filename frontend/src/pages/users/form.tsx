@@ -7,8 +7,7 @@ import {
 import { useState, type FormEvent } from "react";
 import type { User } from "../../types/user";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../utils/api";
-import { getToken } from "../../utils/auth";
+import { getApi } from "../../utils/api";
 import { Message } from "primereact/message";
 import type { WretchError } from "wretch";
 
@@ -79,10 +78,7 @@ function UserForm({ user, onSubmit }: PropsType) {
   };
 
   async function createNewUser() {
-    const token = getToken();
-
-    api
-      .headers({ Authorization: `Bearer ${token}` })
+    getApi()
       .url("/users")
       .post({ username, email, position, password })
       .unauthorized(() => {
@@ -107,8 +103,6 @@ function UserForm({ user, onSubmit }: PropsType) {
       return;
     }
 
-    const token = getToken();
-
     const body: {
       username: string;
       email: string;
@@ -124,8 +118,7 @@ function UserForm({ user, onSubmit }: PropsType) {
       body.password = password;
     }
 
-    api
-      .headers({ Authorization: `Bearer ${token}` })
+    getApi()
       .url("/users/" + user.uuid)
       .patch(body)
       .unauthorized(() => {

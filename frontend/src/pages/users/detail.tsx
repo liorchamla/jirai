@@ -1,19 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getToken } from "../../utils/auth";
 import type { User } from "../../types/user";
-import { api } from "../../utils/api";
+import { getApi } from "../../utils/api";
 
 function UserDetail() {
   const [user, setUser] = useState<User>();
 
   const { uuid } = useParams();
   async function fetchUser() {
-    const token = getToken();
-    const result: User = await api
-      .headers({ Authorization: `Bearer ${token}` })
-      .get(`/users/${uuid}`)
-      .json();
+    const result: User = await getApi().get(`/users/${uuid}`).json();
     setUser(result);
   }
 
