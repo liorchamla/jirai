@@ -7,8 +7,12 @@ export function getToken(): string | null {
 
 export function decodeToken(token: string): JwtPayload | null {
   try {
-    const decoded = jwtDecode(token);
-    return decoded as JwtPayload;
+    const decoded = jwtDecode<JwtPayload>(token);
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+      // Token is expired
+      return null;
+    }
+    return decoded;
   } catch {
     return null;
   }
