@@ -3,51 +3,61 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserForm from "./form";
 import type { User } from "../../types/user";
-import { api } from "../../utils/api";
-import { getToken } from "../../utils/auth";
+import { getApi } from "../../utils/api";
+import { Toast } from "primereact/toast";
 
 function UsersList() {
-  const [visible, setVisible] = useState<boolean>(false);
-  const [updateVisible, setUpdateVisible] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
+  const [dialog, setDialog] = useState<"add" | "update" | "delete" | null>(
+    null
+  );
 
-  let navigate = useNavigate();
+  const toast = useRef<Toast>(null);
+
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
-    const token = getToken();
-    const result: { users: User[] } = await api
-      .headers({ Authorization: `Bearer ${token}` })
-      .get("/users")
-      .json();
+    setIsLoading(true);
+    const result: { users: User[] } = await getApi().get("/users").json();
     setUsers(result.users);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const handleDelete = async (user: User) => {
-    if (
-      window.confirm(
-        `Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.username} ?`
-      )
-    ) {
-      const token = getToken();
-      try {
-        await api
-          .headers({ Authorization: `Bearer ${token}` })
-          .delete(`/users/${user.uuid}`);
-        window.alert(
-          `L'utilisateur ${user.username} a été supprimé avec succès.`
-        );
-        fetchUsers(); // Rafraîchir la liste
-      } catch {
-        window.alert("Erreur lors de la suppression de l'utilisateur.");
-      }
+  const handleDelete = (user: User) => {
+    setSelectedUser(user);
+    setDialog("delete");
+  };
+
+  const handleConfirmDelete = async (user: User) => {
+    try {
+      setIsLoadingDelete(true);
+      await getApi().delete(`/users/${user.uuid}`).json();
+      setIsLoadingDelete(false);
+      setDialog(null);
+      fetchUsers(); // Rafraîchir la liste
+      toast.current?.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Utilisateur supprimé avec succès",
+        life: 3000,
+      });
+    } catch {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail:
+          "Une erreur s'est produite lors de la suppression de l'utilisateur",
+      });
     }
   };
 
@@ -63,7 +73,7 @@ function UsersList() {
         <Button
           onClick={() => {
             setSelectedUser(user);
-            setUpdateVisible(true);
+            setDialog("update");
           }}
           icon="pi pi-pencil"
           severity="success"
@@ -72,7 +82,9 @@ function UsersList() {
         <Button
           icon="pi pi-times"
           severity="danger"
-          onClick={() => handleDelete(user)}
+          onClick={() => {
+            handleDelete(user);
+          }}
           className="ml-2"
           text
         />
@@ -96,44 +108,74 @@ function UsersList() {
         <Button
           icon="pi pi-plus"
           label="Ajouter un utilisateur"
-          onClick={() => setVisible(true)}
+          onClick={() => setDialog("add")}
           size="small"
         />
         <Dialog
           header="Ajouter un utilisateur"
-          visible={visible}
+          visible={dialog === "add"}
           style={{ width: "60vw" }}
           onHide={() => {
-            if (!visible) return;
-            setVisible(false);
+            setDialog(null);
           }}
         >
           <UserForm
             onSubmit={() => {
-              setVisible(false);
+              setDialog(null);
               fetchUsers();
             }}
           />
         </Dialog>
         <Dialog
           header="Modifier utilisateur"
-          visible={updateVisible}
+          visible={dialog === "update"}
           style={{ width: "60vw" }}
           onHide={() => {
-            if (!updateVisible) return;
-            setUpdateVisible(false);
+            setDialog(null);
           }}
         >
           <UserForm
             user={selectedUser}
             onSubmit={() => {
-              setUpdateVisible(false);
+              setDialog(null);
               fetchUsers();
             }}
           />
         </Dialog>
+        <Dialog
+          header="Supprimer utilisateur"
+          visible={dialog === "delete"}
+          style={{ width: "30vw" }}
+          onHide={() => {
+            setDialog(null);
+          }}
+        >
+          <div className="flex flex-col items-center">
+            <h2 className="text-lg font-semibold mb-4">
+              Êtes-vous sûr de vouloir supprimer cet utilisateur{" "}
+              {selectedUser?.username} ?
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                label="Confirmer"
+                severity="danger"
+                onClick={() => {
+                  if (selectedUser) {
+                    handleConfirmDelete(selectedUser);
+                  }
+                }}
+                loading={isLoadingDelete}
+              />
+              <Button
+                label="Annuler"
+                className="mt-2"
+                onClick={() => setDialog(null)}
+              />
+            </div>
+          </div>
+        </Dialog>
       </div>
-      <DataTable value={users}>
+      <DataTable value={users} loading={isLoading}>
         <Column field="username" header="Username" />
         <Column body={getUserEmail} header="Email" />
         <Column field="position" header="Position" />
@@ -142,6 +184,7 @@ function UsersList() {
       <Link to="/login" className="btn btn-primary">
         Go to Login
       </Link>
+      <Toast ref={toast} position="top-right" />
     </div>
   );
 }

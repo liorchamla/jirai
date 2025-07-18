@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../utils/api";
+import { authenticate } from "../../utils/auth";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -16,11 +16,7 @@ function Login() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     try {
-      const response = await api
-        .url("/login")
-        .post({ email, password })
-        .json<{ token: string }>();
-      window.localStorage.setItem("token", response.token);
+      await authenticate({ email, password });
       navigate("/users");
     } catch (error) {
       // eslint-disable-next-line
