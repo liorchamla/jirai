@@ -71,31 +71,39 @@ function UserForm({ user, onSubmit }: PropsType) {
         // eslint-disable-next-line
         console.error(error);
         setError(
-          "Une erreur s'est produite lors de la création de l'utilisateur."
+          "Une erreur s'est produite lors de la mise à jour de l'utilisateur."
         );
       }
     }
   };
 
   async function createNewUser() {
-    getApi()
-      .url("/users")
-      .post({ username, email, position, password })
-      .unauthorized(() => {
-        navigate("/login");
-      })
-      .error(409, (err) => {
-        setError(() => err.json.error);
-      })
-      .error(422, (err) => {
-        handleApiError(err);
-      })
-      .json()
-      .then((result) => {
-        if (result) {
-          onSubmit();
-        }
-      });
+    try {
+      getApi()
+        .url("/users")
+        .post({ username, email, position, password })
+        .unauthorized(() => {
+          navigate("/login");
+        })
+        .error(409, (err) => {
+          setError(() => err.json.error);
+        })
+        .error(422, (err) => {
+          handleApiError(err);
+        })
+        .json()
+        .then((result) => {
+          if (result) {
+            onSubmit();
+          }
+        });
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+      setError(
+        "Une erreur s'est produite lors de la création de l'utilisateur."
+      );
+    }
   }
 
   async function updateUser() {
@@ -117,25 +125,35 @@ function UserForm({ user, onSubmit }: PropsType) {
     if (password) {
       body.password = password;
     }
-
-    getApi()
-      .url("/users/" + user.uuid)
-      .patch(body)
-      .unauthorized(() => {
-        navigate("/login");
-      })
-      .error(409, (err) => {
-        setError(() => err.json.error);
-      })
-      .error(422, (err) => {
-        handleApiError(err);
-      })
-      .json()
-      .then((result) => {
-        if (result) {
-          onSubmit();
-        }
-      });
+    try {
+      getApi()
+        .url("/users/" + user.uuid)
+        .patch(body)
+        .unauthorized(() => {
+          navigate("/login");
+        })
+        .error(409, (err) => {
+          setError(() => err.json.error);
+        })
+        .error(422, (err) => {
+          handleApiError(err);
+        })
+        .json()
+        .then((result) => {
+          if (result) {
+            onSubmit();
+          }
+        });
+    } catch (err) {
+      if ((err as WretchError).status === 409) {
+        setError(() => (err as WretchError).json.error);
+      } else if ((err as WretchError).status === 422) {
+        handleApiError(err as WretchError);
+      } else {
+        // eslint-disable-next-line
+        console.error("Unexpected error:", err);
+      }
+    }
   }
 
   function handleApiError(err: WretchError) {
@@ -221,13 +239,6 @@ function UserForm({ user, onSubmit }: PropsType) {
         placeholder="Équipes"
         className="mb-4"
       />
-      {errorPasswordConfirm && (
-        <Message
-          severity="error"
-          text={errorPasswordConfirm}
-          className="w-full mb-5"
-        />
-      )}
       <label htmlFor="password">Mot de passe</label>
       <InputText
         id="password"
@@ -246,6 +257,13 @@ function UserForm({ user, onSubmit }: PropsType) {
         onChange={(e) => setConfirmPassword(e.target.value)}
         className="mb-4"
       />
+      {errorPasswordConfirm && (
+        <Message
+          severity="error"
+          text={errorPasswordConfirm}
+          className="w-full mb-5"
+        />
+      )}
       {errorPassword.length > 0 && (
         <Message
           severity="error"

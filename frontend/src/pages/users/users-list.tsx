@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import UserForm from "./form";
 import type { User } from "../../types/user";
 import { getApi } from "../../utils/api";
@@ -22,16 +22,16 @@ function UsersList() {
 
   const navigate = useNavigate();
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     const result: { users: User[] } = await getApi().get("/users").json();
     setUsers(result.users);
     setIsLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleDelete = (user: User) => {
     setSelectedUser(user);
