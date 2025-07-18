@@ -14,7 +14,7 @@ function UserDetail() {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [uuid]);
 
   return (
     <div className="flex justify-center items-center">
