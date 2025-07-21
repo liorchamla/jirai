@@ -9,7 +9,9 @@ import { JwtPayload } from "jsonwebtoken";
 // qui contiendra les informations de l'utilisateur décodées du token JWT.
 declare module "express" {
   interface Request {
-    user?: string | JwtPayload;
+    user?: JwtPayload & {
+      uuid: string;
+    };
   }
 }
 
@@ -37,7 +39,7 @@ export function authenticateToken(
     // On vérifie le token avec la clé secrète
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     // On attache les infos à la requête
-    req.user = decoded;
+    req.user = decoded as JwtPayload & { uuid: string };
     // On passe au middleware suivant
     next();
   } catch {

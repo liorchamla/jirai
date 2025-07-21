@@ -141,10 +141,11 @@ describe("createUser", () => {
       select: { password: true },
     });
 
-    expect(userWithPassword.password).not.toBe("Password123@"); // Ensure password is hashed
+    expect(userWithPassword).not.toBeNull();
+    expect(userWithPassword!.password).not.toBe("Password123@"); // Ensure password is hashed
 
     const validPassword = await argon2.verify(
-      userWithPassword.password,
+      userWithPassword!.password,
       "Password123@"
     );
 
