@@ -16,5 +16,21 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  projects Project[] @relation("UserProjects")
+
   @@map("users")
+}
+
+model Project {
+  slug       String   @id @unique
+  name       String
+  description String?
+  createdBy  String
+  status     String 
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  creator   User     @relation("UserProjects", fields: [createdBy], references: [uuid])
+
+  @@map("projects")
 }
