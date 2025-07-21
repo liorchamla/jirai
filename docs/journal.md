@@ -83,3 +83,10 @@
 - Configuration de wretch pour pointer vers l’API backend.
 - Gestion des appels API pour l’authentification, la récupération, la création, la modification et la suppression d’utilisateurs.
 - Affichage dynamique des données utilisateurs dans le frontend.
+
+## 11. Backend : Implémentation du CRUD projet\*\*
+
+- Création des routes REST pour les projets (création, lecture, mise à jour, suppression) dans `backend/src/routes/project.router.ts`.
+- Développement des contrôleurs associés dans `backend/src/controllers/projectControllers.ts`.
+- Mise en place des schémas de validation (ex : `projectsSchema.ts`).
+- Rédaction de tests unitauires pour chaque endpoint utilisateur.

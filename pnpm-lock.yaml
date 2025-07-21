@@ -28,6 +28,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      slug:
+        specifier: ^11.0.0
+        version: 11.0.0
       zod:
         specifier: ^3.25.72
         version: 3.25.75
@@ -47,6 +50,9 @@ importers:
       '@types/node':
         specifier: ^24.0.7
         version: 24.0.10
+      '@types/slug':
+        specifier: ^5.0.9
+        version: 5.0.9
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.35.1
         version: 8.35.1(@typescript-eslint/parser@8.35.1(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3)
@@ -827,6 +833,9 @@ packages:
 
   '@types/sizzle@2.3.9':
     resolution: {integrity: sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==}
+
+  '@types/slug@5.0.9':
+    resolution: {integrity: sha512-6Yp8BSplP35Esa/wOG1wLNKiqXevpQTEF/RcL/NV6BBQaMmZh4YlDwCgrrFSoUE4xAGvnKd5c+lkQJmPrBAzfQ==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -2577,6 +2586,10 @@ packages:
     resolution: {integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==}
     engines: {node: '>=10'}
 
+  slug@11.0.0:
+    resolution: {integrity: sha512-71pb27F9TII2dIweGr2ybS220IUZo1A9GKZ+e2q8rpUr24mejBb6fTaSStM0SE1ITUUOshilqZze8Yt1BKj+ew==}
+    hasBin: true
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -3602,6 +3615,8 @@ snapshots:
   '@types/sinonjs__fake-timers@8.1.1': {}
 
   '@types/sizzle@2.3.9': {}
+
+  '@types/slug@5.0.9': {}
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -5607,6 +5622,8 @@ snapshots:
       ansi-styles: 4.3.0
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
+
+  slug@11.0.0: {}
 
   source-map-js@1.2.1: {}
 
