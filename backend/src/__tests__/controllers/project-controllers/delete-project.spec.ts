@@ -50,7 +50,7 @@ describe("deleteProject", () => {
       where: { slug: project.slug },
     });
 
-    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(deletedProject).toBeNull();
   });
 

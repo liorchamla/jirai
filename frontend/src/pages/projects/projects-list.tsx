@@ -1,17 +1,111 @@
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Link } from "react-router-dom";
-
-interface NameProject {
-  name: string;
-}
+import { Link, useNavigate } from "react-router-dom";
+import { getApi } from "../../utils/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Project } from "../../types/project";
+import { Tag } from "primereact/tag";
+import { Dialog } from "primereact/dialog";
+import ProjectForm from "./form";
+import { Toast } from "primereact/toast";
 
 function ProjectsList() {
-  const projects: NameProject[] = [
-    { name: "Project A" },
-    { name: "Project B" },
-  ];
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>(
+    undefined
+  );
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [dialog, setDialog] = useState<"add" | "update" | "delete" | null>(
+    null
+  );
+
+  const toast = useRef<Toast>(null);
+
+  const navigate = useNavigate();
+
+  const fetchProjects = useCallback(async () => {
+    const result: { projects: Project[] } = await getApi()
+      .get("/projects")
+      .json();
+    setProjects(result.projects);
+  }, []);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  const handleDelete = (project: Project) => {
+    setSelectedProject(project);
+    setDialog("delete");
+  };
+
+  const handleConfirmDelete = async (project: Project) => {
+    try {
+      await getApi().delete(`/projects/${project.slug}`).json();
+      setDialog(null);
+      fetchProjects(); // Rafraîchir la liste
+      toast.current?.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Projet supprimé avec succès",
+        life: 3000,
+      });
+    } catch {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Une erreur s'est produite lors de la suppression du projet",
+      });
+    }
+  };
+
+  const statusProjectTemplate = (project: Project) => {
+    return <Tag value={project.status} severity={getSeverity(project)}></Tag>;
+  };
+
+  const getSeverity = (project: Project) => {
+    switch (project.status) {
+      case "active":
+        return "success";
+
+      case "archived":
+        return "warning";
+
+      default:
+        return null;
+    }
+  };
+
+  const getProjectActions = (project: Project) => {
+    return (
+      <>
+        <Button
+          onClick={() => navigate(`/projects/${project.slug}`)}
+          icon="pi pi-eye"
+          severity="info"
+          text
+        />
+        <Button
+          onClick={() => {
+            setSelectedProject(project);
+            setDialog("update");
+          }}
+          icon="pi pi-pencil"
+          severity="success"
+          text
+        />
+        <Button
+          icon="pi pi-times"
+          severity="danger"
+          onClick={() => {
+            handleDelete(project);
+          }}
+          className="ml-2"
+          text
+        />
+      </>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
@@ -20,16 +114,78 @@ function ProjectsList() {
         <Button
           icon="pi pi-plus"
           label="Ajouter un projet"
-          onClick={() => window.alert("Ajouter un projet")}
+          onClick={() => setDialog("add")}
           size="small"
         />
+        <Dialog
+          header="Ajouter un projet"
+          visible={dialog === "add"}
+          style={{ width: "60vw" }}
+          onHide={() => setDialog(null)}
+        >
+          <ProjectForm
+            onSubmit={() => {
+              setDialog(null);
+              fetchProjects();
+            }}
+          />
+        </Dialog>
+        <Dialog
+          header="Modifier le projet"
+          visible={dialog === "update"}
+          style={{ width: "60vw" }}
+          onHide={() => setDialog(null)}
+        >
+          <ProjectForm
+            project={selectedProject}
+            onSubmit={() => {
+              setDialog(null);
+              fetchProjects();
+            }}
+          />
+        </Dialog>
+        <Dialog
+          header="Supprimer projet"
+          visible={dialog === "delete"}
+          style={{ width: "30vw" }}
+          onHide={() => {
+            setDialog(null);
+          }}
+        >
+          <div className="flex flex-col items-center">
+            <h2 className="text-lg font-semibold mb-4">
+              Êtes-vous sûr de vouloir supprimer ce projet{" "}
+              {selectedProject?.name} ?
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                label="Confirmer"
+                severity="danger"
+                onClick={() => {
+                  if (selectedProject) {
+                    handleConfirmDelete(selectedProject);
+                  }
+                }}
+              />
+              <Button
+                label="Annuler"
+                className="mt-2"
+                onClick={() => setDialog(null)}
+              />
+            </div>
+          </div>
+        </Dialog>
       </div>
       <DataTable value={projects}>
         <Column field="name" header="Project" />
+        <Column field="description" header="Description" />
+        <Column body={statusProjectTemplate} header="Status" />
+        <Column body={getProjectActions} header="Actions" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">
         Go to Login
       </Link>
+      <Toast ref={toast} position="top-right" />
     </div>
   );
 }
