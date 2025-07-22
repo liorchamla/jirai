@@ -15,6 +15,7 @@ export async function getAllProjects(req: Request, res: Response) {
     const projects = await prisma.project.findMany({
       include: { creator: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
+      orderBy: [{ updatedAt: "desc" }],
     });
     res.status(200).json({ projects });
   } catch (error) {
@@ -53,7 +54,7 @@ export async function getProjectBySlug(req: Request, res: Response) {
 export async function createProject(req: Request, res: Response) {
   const result = createProjectSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ error: result.error });
+    res.status(422).json({ error: result.error });
     return;
   }
 
@@ -62,7 +63,7 @@ export async function createProject(req: Request, res: Response) {
     return;
   }
 
-  const { name, description } = result.data;
+  const { name, description, status } = result.data;
   const projectSlug = slug(name);
 
   try {
@@ -72,7 +73,7 @@ export async function createProject(req: Request, res: Response) {
         name,
         description,
         createdBy: req.user.uuid, // Assuming req.user is set by authentication middleware
-        status: "active", // Default status
+        status: status || "active", // Default status
       },
       include: {
         creator: true, // Include user information if needed
@@ -93,7 +94,7 @@ export async function updateProject(req: Request, res: Response) {
   const { slug } = req.params;
   const result = updateProjectSchema.safeParse(req.body);
   if (!result.success) {
-    res.status(400).json({ error: result.error });
+    res.status(422).json({ error: result.error });
     return;
   }
 
@@ -115,7 +116,7 @@ export async function updateProject(req: Request, res: Response) {
     return;
   }
 
-  const { name, description } = result.data;
+  const { name, description, status } = result.data;
 
   try {
     const updatedProject = await prisma.project.update({
@@ -123,6 +124,7 @@ export async function updateProject(req: Request, res: Response) {
       data: {
         name,
         description,
+        status,
       },
       include: {
         creator: true,
@@ -164,7 +166,7 @@ export async function deleteProject(req: Request, res: Response) {
     const deletedProject = await prisma.project.delete({
       where: { slug },
     });
-    res.status(204).json({
+    res.status(200).json({
       message: "Project deleted successfully",
       project: deletedProject,
     });

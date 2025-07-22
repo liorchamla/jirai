@@ -75,7 +75,7 @@ describe("createProject", () => {
 
     await createProject(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       error: expect.objectContaining({
         issues: expect.arrayContaining([
