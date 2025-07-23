@@ -169,7 +169,10 @@ function ProjectForm({ project, onSubmit }: PropsType) {
       {error && (
         <Message severity="error" text={error} className="w-full mb-5" />
       )}
-      <Button type="submit" label="Créer le projet" />
+      <Button
+        type="submit"
+        label={project ? "Mettre à jour le projet" : "Créer le projet"}
+      />
     </form>
   );
 }

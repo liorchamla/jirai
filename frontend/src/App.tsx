@@ -5,6 +5,7 @@ import Login from "./pages/users/login";
 import UsersList from "./pages/users/users-list";
 import ProjectsList from "./pages/projects/projects-list";
 import UserDetail from "./pages/users/detail";
+import ProjectDetail from "./pages/projects/detail";
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/users" element={<UsersList />} />
-          <Route path="/projects" element={<ProjectsList />} />
           <Route path="/users/:uuid" element={<UserDetail />} />
+          <Route path="/projects" element={<ProjectsList />} />
+          <Route path="/projects/:slug" element={<ProjectDetail />} />
         </Routes>
       </main>
     </>
