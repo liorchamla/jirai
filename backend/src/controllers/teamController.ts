@@ -96,6 +96,14 @@ export async function updateTeam(req: Request, res: Response) {
     return;
   }
 
+  const existingTeam = await prisma.team.findUnique({
+    where: { slug },
+  });
+  if (!existingTeam) {
+    res.status(404).json({ error: "Team not found" });
+    return;
+  }
+
   const { name } = result.data;
 
   try {
@@ -124,6 +132,14 @@ export async function deleteTeam(req: Request, res: Response) {
 
   if (!req.user) {
     res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const existingTeam = await prisma.team.findUnique({
+    where: { slug },
+  });
+  if (!existingTeam) {
+    res.status(404).json({ error: "Team not found" });
     return;
   }
 
