@@ -1,23 +1,23 @@
-import * as ProjectController from "../controllers/projectController";
+import * as projectController from "../controllers/projectController";
 import { authenticateToken } from "../middlewares/auth";
 import { Router } from "express";
 
 export const router = Router();
 
-router.get("/projects", authenticateToken, ProjectController.getAllProjects);
+router.get("/projects", authenticateToken, projectController.getAllProjects);
 router.get(
   "/projects/:slug",
   authenticateToken,
-  ProjectController.getProjectBySlug
+  projectController.getProjectBySlug
 );
-router.post("/projects", authenticateToken, ProjectController.createProject);
+router.post("/projects", authenticateToken, projectController.createProject);
 router.patch(
   "/projects/:slug",
   authenticateToken,
-  ProjectController.updateProject
+  projectController.updateProject
 );
 router.delete(
   "/projects/:slug",
   authenticateToken,
-  ProjectController.deleteProject
+  projectController.deleteProject
 );
