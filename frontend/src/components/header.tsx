@@ -10,8 +10,13 @@ function Header() {
     },
     {
       label: "Users",
-      icon: "pi pi-users",
+      icon: "pi pi-user",
       url: "/users",
+    },
+    {
+      label: "Teams",
+      icon: "pi pi-users",
+      url: "/teams",
     },
   ];
   const start = (

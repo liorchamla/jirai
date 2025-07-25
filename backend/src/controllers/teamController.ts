@@ -10,6 +10,8 @@ import slug from "slug";
 export async function getAllTeams(req: Request, res: Response) {
   try {
     const teams = await prisma.team.findMany({
+      include: { creator: true }, // Include user information if needed
+      omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
     res.status(200).json({ teams });

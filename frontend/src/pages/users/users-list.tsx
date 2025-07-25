@@ -152,8 +152,8 @@ function UsersList() {
         >
           <div className="flex flex-col items-center">
             <h2 className="text-lg font-semibold mb-4">
-              Êtes-vous sûr de vouloir supprimer cet utilisateur{" "}
-              {selectedUser?.username} ?
+              Êtes-vous sûr de vouloir supprimer cet utilisateur &quot;
+              {selectedUser?.username}&quot; ?
             </h2>
             <div className="flex gap-2">
               <Button

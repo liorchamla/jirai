@@ -39,6 +39,8 @@ describe("getAllTeams", () => {
           createdBy: user.uuid,
         },
       ],
+      omit: { createdBy: true }, // Omit createdBy if not needed in response
+      include: { creator: true }, // Include user information if needed
     });
 
     const req = {} as Request;
