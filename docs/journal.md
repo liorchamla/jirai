@@ -89,4 +89,23 @@
 - Création des routes REST pour les projets (création, lecture, mise à jour, suppression) dans `backend/src/routes/project.router.ts`.
 - Développement des contrôleurs associés dans `backend/src/controllers/projectControllers.ts`.
 - Mise en place des schémas de validation (ex : `projectsSchema.ts`).
-- Rédaction de tests unitauires pour chaque endpoint utilisateur.
+- Rédaction de tests unitaires pour chaque endpoint utilisateur.
+
+## 12. Frontend : pages projets\*\*
+
+- Développement de la page de liste des projets (`frontend/src/pages/projects/projects-list.tsx`).
+- Création de la page de détail projet (`frontend/src/pages/projects/detail.tsx`).
+- Intégration d'un formulaire de création/modification projet (`frontend/src/pages/projects/form.tsx`).
+
+## 13.Backend : Implémentation du CRUD team\*\*
+
+- Création des routes REST pour les teams (création, lecture, mise à jour, suppression) dans `backend/src/routes/team.router.ts`.
+- Développement des contrôleurs associés dans `backend/src/controllers/teamControllers.ts`.
+- Mise en place des schémas de validation (ex : `teamsSchema.ts`).
+- Rédaction de tests unitaires pour chaque endpoint d'équipe.
+
+## 14. Frontend : pages équipes\*\*
+
+- Développement de la page de liste des équipes (`frontend/src/pages/teams/teams-list.tsx`).
+- Création de la page de détail d'équipe (`frontend/src/pages/teams/detail.tsx`).
+- Intégration d'un formulaire de création/modification équipe (`frontend/src/pages/teams/form.tsx`).

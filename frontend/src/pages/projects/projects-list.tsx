@@ -154,8 +154,8 @@ function ProjectsList() {
         >
           <div className="flex flex-col items-center">
             <h2 className="text-lg font-semibold mb-4">
-              Êtes-vous sûr de vouloir supprimer ce projet{" "}
-              {selectedProject?.name} ?
+              Êtes-vous sûr de vouloir supprimer ce projet &quot;
+              {selectedProject?.name}&quot; ?
             </h2>
             <div className="flex gap-2">
               <Button
