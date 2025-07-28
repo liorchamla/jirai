@@ -6,8 +6,7 @@ import { Request, Response } from "express";
 describe("getUserById", () => {
   beforeEach(async () => {
     // Clear the database before each test
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
+    await prisma.project.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
@@ -15,8 +14,7 @@ describe("getUserById", () => {
 
   afterAll(async () => {
     // Clean up the database after all tests
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
+    await prisma.project.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
@@ -42,11 +40,7 @@ describe("getUserById", () => {
     const userWithTeams = await prisma.user.findUnique({
       where: { uuid: user.uuid },
       include: {
-        teams: {
-          include: {
-            team: true,
-          },
-        },
+        teams: true,
       },
     });
 

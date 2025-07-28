@@ -7,17 +7,15 @@ import argon2 from "argon2";
 describe("createUser", () => {
   beforeEach(async () => {
     // Clear the database before each test
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.project.deleteMany({});
     vi.clearAllMocks();
   });
 
   afterAll(async () => {
     // Clean up the database after all tests
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
+    await prisma.project.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
@@ -156,11 +154,7 @@ describe("createUser", () => {
     const user = await prisma.user.findUnique({
       where: { email: "newuser@example.com" },
       include: {
-        teams: {
-          include: {
-            team: true,
-          },
-        },
+        teams: true,
       },
     });
 

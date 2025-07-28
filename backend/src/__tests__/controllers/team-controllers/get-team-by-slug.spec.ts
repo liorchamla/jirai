@@ -52,11 +52,7 @@ describe("getTeamBySlug", () => {
     const apiTeams = await prisma.team.findMany({
       include: {
         creator: true,
-        teams: {
-          include: {
-            user: true,
-          },
-        },
+        members: true,
       },
       omit: { createdBy: true },
     });

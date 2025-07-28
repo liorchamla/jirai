@@ -12,11 +12,7 @@ export async function getAllTeams(req: Request, res: Response) {
     const teams = await prisma.team.findMany({
       include: {
         creator: true,
-        teams: {
-          include: {
-            user: true, // Include user information if needed
-          },
-        },
+        members: true,
       }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
@@ -39,11 +35,7 @@ export async function getTeamBySlug(req: Request, res: Response) {
       where: { slug },
       include: {
         creator: true,
-        teams: {
-          include: {
-            user: true, // Include user information if needed
-          },
-        },
+        members: true,
       }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
     });
@@ -162,9 +154,6 @@ export async function deleteTeam(req: Request, res: Response) {
   try {
     const deletedTeam = await prisma.team.delete({
       where: { slug },
-    });
-    await prisma.teamMember.deleteMany({
-      where: { teamId: deletedTeam.slug },
     });
     res
       .status(200)

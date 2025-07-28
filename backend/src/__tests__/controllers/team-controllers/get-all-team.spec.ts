@@ -6,8 +6,7 @@ import { getAllTeams } from "../../../controllers/teamController";
 describe("getAllTeams", () => {
   beforeEach(async () => {
     // Clear the database before each test
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
+    await prisma.project.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
@@ -15,8 +14,7 @@ describe("getAllTeams", () => {
 
   afterAll(async () => {
     // Clean up the database after all tests
-    await prisma.teamMember.deleteMany({});
-    await prisma.teamProject.deleteMany({});
+    await prisma.project.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
@@ -58,11 +56,7 @@ describe("getAllTeams", () => {
     const apiTeams = await prisma.team.findMany({
       include: {
         creator: true,
-        teams: {
-          include: {
-            user: true,
-          },
-        },
+        members: true,
       },
       omit: { createdBy: true },
     });
