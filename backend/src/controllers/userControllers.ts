@@ -15,6 +15,13 @@ import jwt from "jsonwebtoken";
 export async function getAllUsers(req: Request, res: Response) {
   try {
     const users = await prisma.user.findMany({
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
       orderBy: [{ updatedAt: "desc" }],
     });
     res.status(200).json({ users });
@@ -33,6 +40,13 @@ export async function getUserById(req: Request, res: Response) {
   try {
     const user = await prisma.user.findUnique({
       where: { uuid: uuid },
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
     });
     if (!user) {
       res.status(404).json({ error: "User not found" });
@@ -77,11 +91,56 @@ export async function createUser(req: Request, res: Response) {
     return;
   }
 
+  const { teams, ...userData } = result.data;
+
   try {
+    // Créer l'utilisateur d'abord
     const user = await prisma.user.create({
-      data: result.data,
+      data: userData,
     });
-    res.status(201).json(user);
+
+    // Ensuite, créer les relations TeamMember si des équipes sont spécifiées
+    if (teams && teams.length > 0) {
+      // Vérifier que toutes les équipes existent
+      const existingTeams = await prisma.team.findMany({
+        where: {
+          name: {
+            in: teams.map((tm) => tm),
+          },
+        },
+      });
+
+      if (existingTeams.length !== teams.length) {
+        // Supprimer l'utilisateur créé et retourner une erreur
+        await prisma.user.delete({ where: { uuid: user.uuid } });
+        res.status(400).json({
+          error: "Une ou plusieurs équipes spécifiées n'existent pas",
+        });
+        return;
+      }
+
+      // Créer les relations TeamMember en utilisant les slugs des équipes
+      await prisma.teamMember.createMany({
+        data: existingTeams.map((team) => ({
+          userId: user.uuid,
+          teamId: team.slug,
+        })),
+      });
+    }
+
+    // Récupérer l'utilisateur avec ses équipes pour la réponse
+    const userWithTeams = await prisma.user.findUnique({
+      where: { uuid: user.uuid },
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
+    });
+
+    res.status(201).json(userWithTeams);
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -187,11 +246,50 @@ export async function updateUser(req: Request, res: Response) {
     }
   }
 
+  const { teams, ...updateData } = result.data;
+
   try {
     const updatedUser = await prisma.user.update({
       where: { uuid },
-      data: result.data,
+      data: updateData,
     });
+
+    if (teams !== undefined) {
+      if (teams.length > 0) {
+        // Vérifier que toutes les équipes existent
+        const existingTeams = await prisma.team.findMany({
+          where: {
+            name: {
+              in: teams.map((tm) => tm),
+            },
+          },
+        });
+
+        if (existingTeams.length !== teams.length) {
+          res.status(400).json({
+            error: "Une ou plusieurs équipes spécifiées n'existent pas",
+          });
+          return;
+        }
+
+        // Supprimer les anciennes relations TeamMember
+        await prisma.teamMember.deleteMany({
+          where: { userId: updatedUser.uuid },
+        });
+
+        await prisma.teamMember.createMany({
+          data: existingTeams.map((team) => ({
+            userId: updatedUser.uuid,
+            teamId: team.slug,
+          })),
+        });
+      } else {
+        // Tableau teams vide : supprimer toutes les relations TeamMember
+        await prisma.teamMember.deleteMany({
+          where: { userId: updatedUser.uuid },
+        });
+      }
+    }
 
     res
       .status(200)
@@ -220,6 +318,9 @@ export async function deleteUser(req: Request, res: Response) {
   try {
     const user = await prisma.user.delete({
       where: { uuid },
+    });
+    await prisma.teamMember.deleteMany({
+      where: { userId: uuid },
     });
     res.status(200).json({ message: "User deleted successfully", user });
   } catch (error) {
