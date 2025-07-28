@@ -5,7 +5,9 @@ import { getAllTeams } from "../../../controllers/teamController";
 
 describe("getAllTeams", () => {
   beforeEach(async () => {
-    // Clear the teams table before each test
+    // Clear the database before each test
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
@@ -13,6 +15,8 @@ describe("getAllTeams", () => {
 
   afterAll(async () => {
     // Clean up the database after all tests
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
     await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
@@ -26,7 +30,7 @@ describe("getAllTeams", () => {
       },
     });
 
-    const teams = await prisma.team.createManyAndReturn({
+    await prisma.team.createManyAndReturn({
       data: [
         {
           slug: "test-team",
@@ -51,8 +55,20 @@ describe("getAllTeams", () => {
 
     await getAllTeams(req, res);
 
+    const apiTeams = await prisma.team.findMany({
+      include: {
+        creator: true,
+        teams: {
+          include: {
+            user: true,
+          },
+        },
+      },
+      omit: { createdBy: true },
+    });
+
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ teams: teams });
+    expect(res.json).toHaveBeenCalledWith({ teams: apiTeams });
   });
 
   it("should return an empty array if no teams exist", async () => {
