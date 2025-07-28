@@ -3,7 +3,17 @@ export interface User {
   username: string;
   email: string;
   position: string;
-  teams: { name: string }[];
+  teams: TeamMember[];
+}
+
+export interface TeamMember {
+  id: number;
+  userId: string;
+  teamId: string;
+  team: {
+    slug: string;
+    name: string;
+  };
 }
 
 export interface JwtPayload {

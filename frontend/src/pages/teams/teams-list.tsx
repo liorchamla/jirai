@@ -135,8 +135,8 @@ function TeamsList() {
       >
         <div className="flex flex-col items-center">
           <h2 className="text-lg font-semibold mb-4">
-            Êtes-vous sûr de vouloir supprimer cette équipe "
-            {selectedTeam?.name}" ?
+            Êtes-vous sûr de vouloir supprimer cette équipe &quot;
+            {selectedTeam?.name}&quot; ?
           </h2>
           <div className="flex gap-2">
             <Button

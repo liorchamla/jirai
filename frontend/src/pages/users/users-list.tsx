@@ -101,6 +101,25 @@ function UsersList() {
     );
   };
 
+  const getUserTeams = (user: User) => {
+    if (!user.teams || user.teams.length === 0) {
+      return <span className="text-gray-500">Aucune équipe</span>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {user.teams.map((teamMember) => (
+          <span
+            key={teamMember.id}
+            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+          >
+            {teamMember.team?.name}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -179,6 +198,7 @@ function UsersList() {
         <Column field="username" header="Username" />
         <Column body={getUserEmail} header="Email" />
         <Column field="position" header="Position" />
+        <Column body={getUserTeams} header="Teams" />
         <Column body={getUserActions} header="Actions" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">
