@@ -3,7 +3,7 @@ import prisma from "../../../utils/prisma";
 import { updateTeam } from "../../../controllers/teamController";
 import { Request, Response } from "express";
 
-describe("upsdateTeam", () => {
+describe("updateTeam", () => {
   beforeEach(async () => {
     // Clear the teams table before each test
     await prisma.team.deleteMany({});
