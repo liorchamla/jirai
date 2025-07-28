@@ -6,13 +6,19 @@ import argon2 from "argon2";
 
 describe("createUser", () => {
   beforeEach(async () => {
-    // Clear the users table before each test
+    // Clear the database before each test
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
   });
 
   afterAll(async () => {
     // Clean up the database after all tests
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
 
@@ -115,11 +121,29 @@ describe("createUser", () => {
 
   it("should create a new user if data is valid", async () => {
     //setup
+    // Create a creator user for teams first
+    const creator = await prisma.user.create({
+      data: {
+        username: "creator",
+        email: "creator@example.com",
+        password: "hashedpassword",
+      },
+    });
+
+    // Create teams
+    await prisma.team.createMany({
+      data: [
+        { name: "team1", slug: "team1", createdBy: creator.uuid },
+        { name: "team2", slug: "team2", createdBy: creator.uuid },
+      ],
+    });
+
     const req = {
       body: {
         username: "newuser",
         email: "newuser@example.com",
         password: "Password123@",
+        teams: ["team1", "team2"], // Ces valeurs correspondent aux noms des équipes
       },
     } as unknown as Request;
     const res = {
@@ -131,6 +155,13 @@ describe("createUser", () => {
 
     const user = await prisma.user.findUnique({
       where: { email: "newuser@example.com" },
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
     });
 
     expect(res.status).toHaveBeenCalledWith(201);

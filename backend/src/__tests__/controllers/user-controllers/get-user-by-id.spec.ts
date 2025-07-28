@@ -5,13 +5,19 @@ import { Request, Response } from "express";
 
 describe("getUserById", () => {
   beforeEach(async () => {
-    // Clear the users table before each test
+    // Clear the database before each test
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
   });
 
   afterAll(async () => {
     // Clean up the database after all tests
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
 
@@ -32,8 +38,20 @@ describe("getUserById", () => {
 
     await getUserById(req, res);
 
+    // Récupérer l'utilisateur avec les équipes pour la comparaison
+    const userWithTeams = await prisma.user.findUnique({
+      where: { uuid: user.uuid },
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
+    });
+
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(user);
+    expect(res.json).toHaveBeenCalledWith(userWithTeams);
   });
 
   it("should return 404 if user not found", async () => {

@@ -5,19 +5,25 @@ import prisma from "../../../utils/prisma";
 
 describe("getAllUsers", () => {
   beforeEach(async () => {
-    // Clear the users table before each test
+    // Clear the database before each test
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
     vi.clearAllMocks();
   });
 
   afterAll(async () => {
     // Clean up the database after all tests
+    await prisma.teamMember.deleteMany({});
+    await prisma.teamProject.deleteMany({});
+    await prisma.team.deleteMany({});
     await prisma.user.deleteMany({});
   });
 
   it("should return all users", async () => {
     // setup
-    const users = await prisma.user.createManyAndReturn({
+    await prisma.user.createManyAndReturn({
       data: [
         {
           email: "user1@example.com",
@@ -41,10 +47,21 @@ describe("getAllUsers", () => {
       status: vi.fn().mockReturnThis(),
       json: vi.fn(),
     } as unknown as Response;
+
     await getAllUsers(req, res);
 
+    const apiUsers = await prisma.user.findMany({
+      include: {
+        teams: {
+          include: {
+            team: true,
+          },
+        },
+      },
+    });
+
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ users });
+    expect(res.json).toHaveBeenCalledWith({ users: apiUsers });
   });
 
   it("should return an empty array if no users exist", async () => {

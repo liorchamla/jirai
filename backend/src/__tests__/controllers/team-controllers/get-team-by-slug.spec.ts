@@ -49,8 +49,20 @@ describe("getTeamBySlug", () => {
 
     await getTeamBySlug(req, res);
 
+    const apiTeams = await prisma.team.findMany({
+      include: {
+        creator: true,
+        teams: {
+          include: {
+            user: true,
+          },
+        },
+      },
+      omit: { createdBy: true },
+    });
+
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ team });
+    expect(res.json).toHaveBeenCalledWith({ team: apiTeams[0] });
   });
 
   it("should return 404 if team not found", async () => {
