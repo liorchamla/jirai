@@ -4,7 +4,7 @@ import {
   MultiSelect,
   type MultiSelectChangeEvent,
 } from "primereact/multiselect";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { User } from "../../types/user";
 import { useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
@@ -24,7 +24,10 @@ function UserForm({ user, onSubmit }: PropsType) {
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [position, setPosition] = useState(user?.position || "");
-  const [userTeams, setUserTeams] = useState<Teams[]>(user?.teams || []);
+  const [userTeams, setUserTeams] = useState<Teams[]>(
+    user?.teams.map((team) => ({ name: team.team.name })) || []
+  );
+  const [teams, setTeams] = useState<Teams[]>([]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +40,26 @@ function UserForm({ user, onSubmit }: PropsType) {
   >(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = (await getApi().get("/teams").json()) as {
+          teams: { name: string }[];
+        };
+        setTeams(
+          response.teams.map((team: { name: string }) => ({
+            name: team.name,
+          }))
+        );
+      } catch (error) {
+        // eslint-disable-next-line
+        console.error("Erreur lors du chargement des équipes:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -79,9 +102,12 @@ function UserForm({ user, onSubmit }: PropsType) {
 
   async function createNewUser() {
     try {
+      // Convertir les objets équipes en tableau de noms d'équipes
+      const teamNames = userTeams.map((team) => team.name);
+
       getApi()
         .url("/users")
-        .post({ username, email, position, password })
+        .post({ username, email, position, password, teams: teamNames })
         .unauthorized(() => {
           navigate("/login");
         })
@@ -116,10 +142,12 @@ function UserForm({ user, onSubmit }: PropsType) {
       email: string;
       position: string;
       password?: string;
+      teams?: string[];
     } = {
       username,
       email,
       position,
+      teams: userTeams.map((team) => team.name), // Convertir les objets équipes en tableau de noms d'équipes
     };
 
     if (password) {
@@ -169,15 +197,6 @@ function UserForm({ user, onSubmit }: PropsType) {
       }
     });
   }
-
-  const teams: Teams[] = [
-    { name: "Web dev" },
-    { name: "QA" },
-    { name: "Product" },
-    { name: "Marketing" },
-    { name: "Sales" },
-    { name: "Support" },
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
