@@ -18,7 +18,7 @@ model User {
 
   projects     Project[]    @relation("UserProjects")
   createdTeams Team[]       @relation("UserTeams")
-  teamMembers  TeamMember[]
+  teams        TeamMember[]
 
   @@map("users")
 }
@@ -46,7 +46,7 @@ model Team {
   updatedAt  DateTime @updatedAt
 
   creator      User           @relation("UserTeams", fields: [createdBy], references: [uuid])
-  teamMembers  TeamMember[]
+  teams        TeamMember[]
   teamProjects TeamProject[]
 
   @@map("teams")

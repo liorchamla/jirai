@@ -19,6 +19,7 @@ export const createUserSchema = z.object({
     .refine((val) => /[^a-zA-Z0-9]/.test(val), {
       message: "Password must contain at least one special character",
     }),
+  teams: z.array(z.string()).optional(),
 });
 
 export const userLoginSchema = z.object({
