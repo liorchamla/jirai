@@ -13,7 +13,7 @@ import slug from "slug";
 export async function getAllProjects(req: Request, res: Response) {
   try {
     const projects = await prisma.project.findMany({
-      include: { creator: true }, // Include user information if needed
+      include: { creator: true, teams: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -33,7 +33,7 @@ export async function getProjectBySlug(req: Request, res: Response) {
   try {
     const project = await prisma.project.findUnique({
       where: { slug },
-      include: { creator: true }, // Include user information if needed
+      include: { creator: true, teams: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
     });
     if (!project) {
@@ -63,17 +63,23 @@ export async function createProject(req: Request, res: Response) {
     return;
   }
 
-  const { name, description, status } = result.data;
-  const projectSlug = slug(name);
+  const { teams = [], ...userData } = result.data;
+
+  const projectSlug = slug(userData.name);
 
   try {
+    const teamsToConnect = teams.map((team) => ({ slug: team }));
+
     const newProject = await prisma.project.create({
       data: {
         slug: projectSlug,
-        name,
-        description,
+        name: userData.name,
+        description: userData.description,
         createdBy: req.user.uuid, // Assuming req.user is set by authentication middleware
-        status: status || "active", // Default status
+        status: userData.status || "active", // Default status
+        teams: {
+          connect: teamsToConnect,
+        },
       },
       include: {
         creator: true, // Include user information if needed
@@ -116,15 +122,20 @@ export async function updateProject(req: Request, res: Response) {
     return;
   }
 
-  const { name, description, status } = result.data;
+  const { teams = [], ...userData } = result.data;
+  const teamsToConnect = teams.map((team) => ({ slug: team }));
 
   try {
     const updatedProject = await prisma.project.update({
       where: { slug },
       data: {
-        name,
-        description,
-        status,
+        name: userData.name,
+        description: userData.description,
+        status: userData.status,
+        teams: {
+          set: [], // Supprimer toutes les relations existantes
+          connect: teamsToConnect,
+        },
       },
       include: {
         creator: true,

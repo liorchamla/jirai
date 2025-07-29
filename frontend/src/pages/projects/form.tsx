@@ -7,6 +7,11 @@ import type { Project } from "../../types/project";
 import type { WretchError } from "wretch";
 import { Message } from "primereact/message";
 import { Dropdown } from "primereact/dropdown";
+import {
+  MultiSelect,
+  type MultiSelectChangeEvent,
+} from "primereact/multiselect";
+import type { Team } from "../../types/team";
 
 interface PropsType {
   project?: Project;
@@ -17,11 +22,31 @@ function ProjectForm({ project, onSubmit }: PropsType) {
   const [name, setName] = useState(project?.name || "");
   const [description, setDescription] = useState(project?.description || "");
   const [status, setStatus] = useState(project?.status || "active");
+  const [projectTeams, setProjectTeams] = useState<Team[]>(
+    project?.teams || []
+  );
+  const [teams, setTeams] = useState<Team[]>([]);
   const [errorName, setErrorName] = useState<string[]>([]);
   const [errorDescription, setErrorDescription] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = (await getApi().get("/teams").json()) as {
+          teams: Team[];
+        };
+        setTeams(response.teams);
+      } catch (error) {
+        // eslint-disable-next-line
+        console.error("Erreur lors du chargement des équipes:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   useEffect(() => {
     if (project) {
@@ -58,9 +83,11 @@ function ProjectForm({ project, onSubmit }: PropsType) {
 
   const createNewProject = () => {
     try {
+      const teamSlugs = projectTeams.map((team) => team.slug);
+
       getApi()
         .url("/projects")
-        .post({ name, description, status })
+        .post({ name, description, status, teams: teamSlugs })
         .unauthorized(() => {
           navigate("/login");
         })
@@ -85,10 +112,16 @@ function ProjectForm({ project, onSubmit }: PropsType) {
       return;
     }
 
-    const body: { name: string; description: string; status: string } = {
+    const body: {
+      name: string;
+      description: string;
+      status: string;
+      teams: string[];
+    } = {
       name,
       description,
       status,
+      teams: projectTeams.map((team) => team.slug), // Convertir les objets équipes en tableau de slugs d'équipes
     };
 
     getApi()
@@ -169,6 +202,18 @@ function ProjectForm({ project, onSubmit }: PropsType) {
       {error && (
         <Message severity="error" text={error} className="w-full mb-5" />
       )}
+      <label htmlFor="teams">Équipes</label>
+      <MultiSelect
+        id="teams"
+        value={projectTeams}
+        onChange={(e: MultiSelectChangeEvent) => setProjectTeams(e.value)}
+        options={teams}
+        optionLabel="name"
+        filter
+        display="chip"
+        placeholder="Équipes"
+        className="mb-4"
+      />
       <Button
         type="submit"
         label={project ? "Mettre à jour le projet" : "Créer le projet"}

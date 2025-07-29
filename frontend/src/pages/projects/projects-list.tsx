@@ -107,6 +107,25 @@ function ProjectsList() {
     );
   };
 
+  const getProjectTeams = (project: Project) => {
+    if (!project.teams || project.teams.length === 0) {
+      return <span className="text-gray-500">Aucune équipe</span>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {project.teams.map((team) => (
+          <span
+            key={team.slug}
+            className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+          >
+            {team.name}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -180,6 +199,7 @@ function ProjectsList() {
         <Column field="name" header="Project" />
         <Column field="description" header="Description" />
         <Column body={statusProjectTemplate} header="Status" />
+        <Column body={getProjectTeams} header="Teams" />
         <Column body={getProjectActions} header="Actions" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">
