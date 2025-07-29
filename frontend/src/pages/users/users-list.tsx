@@ -108,12 +108,12 @@ function UsersList() {
 
     return (
       <div className="flex flex-wrap gap-1">
-        {user.teams.map((teamMember) => (
+        {user.teams.map((team) => (
           <span
-            key={teamMember.id}
+            key={team.slug}
             className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
           >
-            {teamMember.team?.name}
+            {team.name}
           </span>
         ))}
       </div>

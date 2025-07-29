@@ -1,19 +1,11 @@
+import type { Team } from "./team";
+
 export interface User {
   uuid: string;
   username: string;
   email: string;
   position: string;
-  teams: TeamMember[];
-}
-
-export interface TeamMember {
-  id: number;
-  userId: string;
-  teamId: string;
-  team: {
-    slug: string;
-    name: string;
-  };
+  teams: Team[];
 }
 
 export interface JwtPayload {
