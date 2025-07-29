@@ -21,6 +21,7 @@
     "prisma:migrate:reset": "pnpm --filter backend exec prisma migrate reset",
     "prisma:migrate:deploy": "pnpm --filter backend exec prisma migrate deploy",
     "prisma:migrate:test": "pnpm --filter backend prisma:migrate:test",
+    "prisma:migrate:reset:test": "pnpm --filter backend prisma:migrate:reset:test",
     "docker:up": "docker-compose up -d",
     "docker:stop": "docker-compose stop",
     "format": "pnpm -r --parallel format",
