@@ -54,8 +54,8 @@ function ProjectDetail() {
               <div className="flex flex-col">
                 <span className="text-2xl">Équipes</span>
                 <ul className="list-disc list-inside text-lg font-medium text-gray-500 mb-4">
-                  {project.teams.map((team, idx) => (
-                    <li key={idx}>{team.name}</li>
+                  {project.teams.map((team) => (
+                    <li key={team.slug}>{team.name}</li>
                   ))}
                 </ul>
               </div>

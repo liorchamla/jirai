@@ -188,13 +188,10 @@ export async function deleteProject(req: Request, res: Response) {
   }
 
   try {
-    const deletedProject = await prisma.project.delete({
+    await prisma.project.delete({
       where: { slug },
     });
-    res.status(200).json({
-      message: "Project deleted successfully",
-      project: deletedProject,
-    });
+    res.status(204).send();
   } catch (error) {
     console.error("Error deleting project:", error);
     res.status(500).json({ error: "Internal server error" });

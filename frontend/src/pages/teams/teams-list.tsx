@@ -39,7 +39,7 @@ function TeamsList() {
 
   const handleConfirmDelete = async (team: Team) => {
     try {
-      await getApi().delete(`/teams/${team.slug}`).json();
+      await getApi().delete(`/teams/${team.slug}`).res();
       setDialog(null);
       fetchTeams(); // Rafraîchir la liste
       toast.current?.show({

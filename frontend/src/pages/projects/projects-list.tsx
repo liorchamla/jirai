@@ -44,7 +44,7 @@ function ProjectsList() {
 
   const handleConfirmDelete = async (project: Project) => {
     try {
-      await getApi().delete(`/projects/${project.slug}`).json();
+      await getApi().delete(`/projects/${project.slug}`).res();
       setDialog(null);
       fetchProjects(); // Rafraîchir la liste
       toast.current?.show({
