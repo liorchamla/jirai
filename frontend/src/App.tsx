@@ -8,10 +8,13 @@ import UserDetail from "./pages/users/detail";
 import ProjectDetail from "./pages/projects/detail";
 import TeamsList from "./pages/teams/teams-list";
 import TeamDetail from "./pages/teams/detail";
+import { AuthContext, useAuth } from "./utils/auth";
 
 function App() {
+  const { userInfo, authenticate } = useAuth();
+
   return (
-    <>
+    <AuthContext value={{ userInfo, authenticate }}>
       <Header />
       <main>
         <Routes>
@@ -24,7 +27,7 @@ function App() {
           <Route path="/teams/:slug" element={<TeamDetail />} />
         </Routes>
       </main>
-    </>
+    </AuthContext>
   );
 }
 

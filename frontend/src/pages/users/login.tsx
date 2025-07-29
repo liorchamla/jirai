@@ -1,9 +1,9 @@
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Message } from "primereact/message";
-import { useState, type FormEvent } from "react";
+import { useContext, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { authenticate } from "../../utils/auth";
+import { AuthContext } from "../../utils/auth";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,12 +11,14 @@ function Login() {
 
   const [error, setError] = useState<string | null>(null);
 
-  let navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     try {
-      await authenticate({ email, password });
+      await authContext.authenticate({ email, password });
       navigate("/users");
     } catch (error) {
       // eslint-disable-next-line

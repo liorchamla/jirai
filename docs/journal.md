@@ -125,3 +125,10 @@
 - Mise en place des fonctions de créations des données avec "faker" dans le fichier `seed.ts`.
 - Ajout du script dans package.json du backend pour pouvoir lancer notre seeding `pnpm db:seed`.
 - Contrôle du bon fonctionnement du script.
+
+## 16. Ajout d'un AuthContext pour pouvoir accéder au données de l'utilisateur loger
+
+- Changement des conditions qui ne peut être effectué que par son créateur au niveau de la modifation et suppression d'un projet
+- Modification du fichier `auth.ts` avec un AuthContext et un useAuth.
+- Ajout du `AuthContext` sur le fichier `App.tsx`.
+- Vérification du bon fonctionnement du AuthContext.
