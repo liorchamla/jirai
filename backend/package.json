@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "create-user": "tsx commands/create-user.ts",
     "prisma:migrate:test": "dotenv -e .env.test -- prisma migrate deploy",
-    "prisma:migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset"
+    "prisma:migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset",
+    "db:seed": "tsx commands/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
+    "@faker-js/faker": "^9.9.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
