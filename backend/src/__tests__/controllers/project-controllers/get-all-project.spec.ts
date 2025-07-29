@@ -26,7 +26,7 @@ describe("getAllProjects", () => {
       },
     });
 
-    const projects = await prisma.project.createManyAndReturn({
+    await prisma.project.createManyAndReturn({
       data: [
         {
           name: "Project 1",
@@ -59,8 +59,16 @@ describe("getAllProjects", () => {
       json: vi.fn(),
     } as unknown as Response;
     await getAllProjects(req, res);
+
+    const apiProjects = await prisma.project.findMany({
+      include: {
+        teams: true,
+        creator: true,
+      },
+      omit: { createdBy: true },
+    });
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ projects });
+    expect(res.json).toHaveBeenCalledWith({ projects: apiProjects });
   });
 });
 

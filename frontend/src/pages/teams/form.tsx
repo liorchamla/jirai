@@ -29,7 +29,7 @@ function TeamForm({ team, onSubmit }: PropsType) {
       } catch (error) {
         // eslint-disable-next-line
         console.error(error);
-        setError("Une erreur s'est produite lors de la création du projet.");
+        setError("Une erreur s'est produite lors de la création de l'équipe.");
       }
     } else {
       try {
@@ -37,7 +37,9 @@ function TeamForm({ team, onSubmit }: PropsType) {
       } catch (error) {
         // eslint-disable-next-line
         console.error(error);
-        setError("Une erreur s'est produite lors de la mise à jour du projet.");
+        setError(
+          "Une erreur s'est produite lors de la mise à jour de l'équipe."
+        );
       }
     }
   };
@@ -62,7 +64,7 @@ function TeamForm({ team, onSubmit }: PropsType) {
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
-      setError("Une erreur s'est produite lors de la création du projet.");
+      setError("Une erreur s'est produite lors de la création de l'équipe.");
     }
   };
 

@@ -47,8 +47,16 @@ describe("getProjectById", () => {
 
     await getProjectBySlug(req, res);
 
+    const apiProjects = await prisma.project.findMany({
+      include: {
+        teams: true,
+        creator: true,
+      },
+      omit: { createdBy: true },
+    });
+
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ project });
+    expect(res.json).toHaveBeenCalledWith({ project: apiProjects[0] });
   });
 
   it("should return 404 if project not found", async () => {
