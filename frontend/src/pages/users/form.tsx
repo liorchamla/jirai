@@ -25,7 +25,7 @@ function UserForm({ user, onSubmit }: PropsType) {
   const [email, setEmail] = useState(user?.email || "");
   const [position, setPosition] = useState(user?.position || "");
   const [userTeams, setUserTeams] = useState<Teams[]>(
-    user?.teams.map((team) => ({ name: team.team.name })) || []
+    user?.teams.map((team) => ({ name: team.name })) || []
   );
   const [teams, setTeams] = useState<Teams[]>([]);
   const [password, setPassword] = useState("");
