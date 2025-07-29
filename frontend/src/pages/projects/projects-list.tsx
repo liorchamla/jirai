@@ -3,12 +3,13 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { Project } from "../../types/project";
 import { Tag } from "primereact/tag";
 import { Dialog } from "primereact/dialog";
 import ProjectForm from "./form";
 import { Toast } from "primereact/toast";
+import { AuthContext } from "../../utils/auth";
 
 function ProjectsList() {
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(
@@ -18,6 +19,8 @@ function ProjectsList() {
   const [dialog, setDialog] = useState<"add" | "update" | "delete" | null>(
     null
   );
+
+  const { userInfo } = useContext(AuthContext);
 
   const toast = useRef<Toast>(null);
 
@@ -85,24 +88,28 @@ function ProjectsList() {
           severity="info"
           text
         />
-        <Button
-          onClick={() => {
-            setSelectedProject(project);
-            setDialog("update");
-          }}
-          icon="pi pi-pencil"
-          severity="success"
-          text
-        />
-        <Button
-          icon="pi pi-times"
-          severity="danger"
-          onClick={() => {
-            handleDelete(project);
-          }}
-          className="ml-2"
-          text
-        />
+        {project.creator.uuid === userInfo?.uuid && (
+          <>
+            <Button
+              onClick={() => {
+                setSelectedProject(project);
+                setDialog("update");
+              }}
+              icon="pi pi-pencil"
+              severity="success"
+              text
+            />
+            <Button
+              icon="pi pi-times"
+              severity="danger"
+              onClick={() => {
+                handleDelete(project);
+              }}
+              className="ml-2"
+              text
+            />
+          </>
+        )}
       </>
     );
   };

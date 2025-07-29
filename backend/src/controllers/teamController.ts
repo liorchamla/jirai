@@ -112,6 +112,13 @@ export async function updateTeam(req: Request, res: Response) {
     return;
   }
 
+  if (existingTeam.createdBy !== req.user.uuid) {
+    res
+      .status(403)
+      .json({ error: "Forbidden: You are not the creator of this team" });
+    return;
+  }
+
   const { name } = result.data;
 
   try {
@@ -148,6 +155,13 @@ export async function deleteTeam(req: Request, res: Response) {
   });
   if (!existingTeam) {
     res.status(404).json({ error: "Team not found" });
+    return;
+  }
+
+  if (existingTeam.createdBy !== req.user.uuid) {
+    res
+      .status(403)
+      .json({ error: "Forbidden: You are not the creator of this team" });
     return;
   }
 

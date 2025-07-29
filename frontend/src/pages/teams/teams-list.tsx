@@ -4,10 +4,11 @@ import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import type { Team } from "../../types/team";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import TeamForm from "./form";
 import { Toast } from "primereact/toast";
+import { AuthContext } from "../../utils/auth";
 
 function TeamsList() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -15,6 +16,8 @@ function TeamsList() {
     null
   );
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
+
+  const { userInfo } = useContext(AuthContext);
 
   const toast = useRef<Toast>(null);
 
@@ -63,24 +66,28 @@ function TeamsList() {
           severity="info"
           text
         />
-        <Button
-          onClick={() => {
-            setSelectedTeam(team);
-            setDialog("update");
-          }}
-          icon="pi pi-pencil"
-          severity="success"
-          text
-        />
-        <Button
-          icon="pi pi-times"
-          severity="danger"
-          onClick={() => {
-            handleDelete(team);
-          }}
-          className="ml-2"
-          text
-        />
+        {team.creator.uuid === userInfo?.uuid && (
+          <>
+            <Button
+              onClick={() => {
+                setSelectedTeam(team);
+                setDialog("update");
+              }}
+              icon="pi pi-pencil"
+              severity="success"
+              text
+            />
+            <Button
+              icon="pi pi-times"
+              severity="danger"
+              onClick={() => {
+                handleDelete(team);
+              }}
+              className="ml-2"
+              text
+            />
+          </>
+        )}
       </>
     );
   };
