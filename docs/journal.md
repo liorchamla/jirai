@@ -109,3 +109,11 @@
 - Développement de la page de liste des équipes (`frontend/src/pages/teams/teams-list.tsx`).
 - Création de la page de détail d'équipe (`frontend/src/pages/teams/detail.tsx`).
 - Intégration d'un formulaire de création/modification équipe (`frontend/src/pages/teams/form.tsx`).
+
+## INTERMEDIAIRE (Lior) : refactorings de prisma 
+
+- On ne veut pas avoir à gérer nous mêmes les tables intermédiaires, ce ne sont que des détails d'implémentation qu'on laisse à Prisma. On utilise donc des relations N-N "implicites" (voir https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations#implicit-many-to-many-relations)
+- Ce qui a donc modifié la présentation des données dans notre API et qui a nécessité de mettre à jour nos tests unitaires mais aussi nos types sur le front.
+- On a refactorisé le controller UserController car il y'avait beaucoup de code dupliqué et compliqué à lire
+- On en a profité pour commenter en profondeur le UserController pour vraiment comprendre ce que chaque bloc de code fait
+- Enfin on a modifié la CI afin que le nom du job "lint-and-format" devienne "quality-and-tests" qui colle beaucoup plus à ce qu'on y fait
