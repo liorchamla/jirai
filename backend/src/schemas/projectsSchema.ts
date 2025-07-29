@@ -10,6 +10,7 @@ export const createProjectSchema = z.object({
   status: z
     .string({ message: "Status is required" })
     .min(2, { message: "Status must be at least 2 characters long" }),
+  teams: z.array(z.string()).optional(),
 });
 
 export const updateProjectSchema = createProjectSchema.partial();
