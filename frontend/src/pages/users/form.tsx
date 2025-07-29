@@ -10,10 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import { Message } from "primereact/message";
 import type { WretchError } from "wretch";
-
-interface Teams {
-  name: string;
-}
+import type { Team } from "../../types/team";
 
 interface PropsType {
   user?: User;
@@ -24,10 +21,8 @@ function UserForm({ user, onSubmit }: PropsType) {
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [position, setPosition] = useState(user?.position || "");
-  const [userTeams, setUserTeams] = useState<Teams[]>(
-    user?.teams.map((team) => ({ name: team.name })) || []
-  );
-  const [teams, setTeams] = useState<Teams[]>([]);
+  const [userTeams, setUserTeams] = useState<Team[]>(user?.teams || []);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,13 +40,9 @@ function UserForm({ user, onSubmit }: PropsType) {
     const fetchTeams = async () => {
       try {
         const response = (await getApi().get("/teams").json()) as {
-          teams: { name: string }[];
+          teams: Team[];
         };
-        setTeams(
-          response.teams.map((team: { name: string }) => ({
-            name: team.name,
-          }))
-        );
+        setTeams(response.teams);
       } catch (error) {
         // eslint-disable-next-line
         console.error("Erreur lors du chargement des équipes:", error);
@@ -102,12 +93,12 @@ function UserForm({ user, onSubmit }: PropsType) {
 
   async function createNewUser() {
     try {
-      // Convertir les objets équipes en tableau de noms d'équipes
-      const teamNames = userTeams.map((team) => team.name);
+      // Convertir les objets équipes en tableau de slugs d'équipes
+      const teamSlugs = userTeams.map((team) => team.slug);
 
       getApi()
         .url("/users")
-        .post({ username, email, position, password, teams: teamNames })
+        .post({ username, email, position, password, teams: teamSlugs })
         .unauthorized(() => {
           navigate("/login");
         })
@@ -147,7 +138,7 @@ function UserForm({ user, onSubmit }: PropsType) {
       username,
       email,
       position,
-      teams: userTeams.map((team) => team.name), // Convertir les objets équipes en tableau de noms d'équipes
+      teams: userTeams.map((team) => team.slug), // Convertir les objets équipes en tableau de slugs d'équipes
     };
 
     if (password) {
