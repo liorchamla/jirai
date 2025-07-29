@@ -33,9 +33,9 @@ const teams = await prisma.team.createManyAndReturn({
 
 // On créait quarante utilisateurs
 const usersData = Array.from({ length: 40 }, () => ({
-  username: faker.internet.username(),
+  username: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
-  position: faker.person.jobTitle().toLowerCase(),
+  position: faker.person.jobTitle(),
   password: passwordHash,
 }));
 

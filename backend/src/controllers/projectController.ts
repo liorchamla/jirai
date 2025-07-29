@@ -122,6 +122,13 @@ export async function updateProject(req: Request, res: Response) {
     return;
   }
 
+  if (existingProject.createdBy !== req.user.uuid) {
+    res
+      .status(403)
+      .json({ error: "Forbidden: You cannot update this project" });
+    return;
+  }
+
   const { teams = [], ...userData } = result.data;
   const teamsToConnect = teams.map((team) => ({ slug: team }));
 
@@ -170,6 +177,13 @@ export async function deleteProject(req: Request, res: Response) {
   });
   if (!existingProject) {
     res.status(404).json({ error: "Project not found" });
+    return;
+  }
+
+  if (existingProject.createdBy !== req.user.uuid) {
+    res
+      .status(403)
+      .json({ error: "Forbidden: You cannot delete this project" });
     return;
   }
 
