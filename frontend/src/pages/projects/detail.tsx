@@ -50,6 +50,16 @@ function ProjectDetail() {
                 </span>
               </div>
             )}
+            {project.teams && project.teams.length > 0 && (
+              <div className="flex flex-col">
+                <span className="text-2xl">Équipes</span>
+                <ul className="list-disc list-inside text-lg font-medium text-gray-500 mb-4">
+                  {project.teams.map((team, idx) => (
+                    <li key={idx}>{team.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center text-red-500 font-semibold py-8">

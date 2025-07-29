@@ -49,7 +49,7 @@ function TeamsList() {
       toast.current?.show({
         severity: "error",
         summary: "Error",
-        detail: "Une erreur s'est produite lors de la suppression du projet",
+        detail: "Une erreur s'est produite lors de la suppression de l'équipe",
       });
     }
   };
@@ -126,7 +126,7 @@ function TeamsList() {
         />
       </Dialog>
       <Dialog
-        header="Supprimer projet"
+        header="Supprimer équipe"
         visible={dialog === "delete"}
         style={{ width: "30vw" }}
         onHide={() => {
