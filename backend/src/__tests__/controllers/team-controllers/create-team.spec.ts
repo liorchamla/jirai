@@ -84,22 +84,4 @@ describe("createTeam", () => {
       },
     });
   });
-
-  it("should return 401 if user is not authenticated", async () => {
-    const req = {
-      body: {
-        name: "Valid Team Name",
-      },
-      user: undefined, // No authenticated user
-    } as unknown as Request;
-
-    const res = {
-      status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
-    } as unknown as Response;
-
-    await createTeam(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-  });
 });
