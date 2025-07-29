@@ -48,11 +48,12 @@ describe("deleteTeam", () => {
 
     await deleteTeam(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Team deleted successfully",
-      team,
+    const deletedTeam = await prisma.team.findUnique({
+      where: { slug: team.slug },
     });
+
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(deletedTeam).toBeNull();
   });
 
   it("should return 404 if team not found", async () => {

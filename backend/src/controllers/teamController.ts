@@ -166,12 +166,10 @@ export async function deleteTeam(req: Request, res: Response) {
   }
 
   try {
-    const deletedTeam = await prisma.team.delete({
+    await prisma.team.delete({
       where: { slug },
     });
-    res
-      .status(200)
-      .json({ message: "Team deleted successfully", team: deletedTeam });
+    res.status(204).send();
   } catch (error) {
     console.error("Error deleting team:", error);
     res.status(500).json({ error: "Internal Server Error" });

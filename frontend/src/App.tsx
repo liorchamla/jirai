@@ -14,7 +14,7 @@ function App() {
   const { userInfo, authenticate } = useAuth();
 
   return (
-    <AuthContext value={{ userInfo, authenticate }}>
+    <AuthContext.Provider value={{ userInfo, authenticate }}>
       <Header />
       <main>
         <Routes>
@@ -27,7 +27,7 @@ function App() {
           <Route path="/teams/:slug" element={<TeamDetail />} />
         </Routes>
       </main>
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
 
