@@ -58,11 +58,11 @@ export async function createTeam(req: Request, res: Response) {
   const result = createTeamSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(422).json({ error: result.error.format() });
+    res.status(422).json({ error: result.error.format() });
+    return;
   }
 
   if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
     return;
   }
 
@@ -96,11 +96,11 @@ export async function updateTeam(req: Request, res: Response) {
   const result = updateTeamSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res.status(422).json({ error: result.error.format() });
+    res.status(422).json({ error: result.error.format() });
+    return;
   }
 
   if (!req.user) {
-    res.status(401).json({ error: "Unauthorized" });
     return;
   }
 
