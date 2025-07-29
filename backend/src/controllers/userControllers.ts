@@ -404,7 +404,7 @@ export async function deleteUser(req: Request, res: Response) {
     });
 
     // On renvoie l'utilisateur supprimé dans la réponse
-    res.status(204);
+    res.status(204).send(); // 204 No Content, car on ne renvoie pas de corps
   } catch (error) {
     // En cas d'erreur lors de la suppression de l'utilisateur, on renvoie une
     console.error("Error deleting user:", error);

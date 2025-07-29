@@ -41,7 +41,7 @@ function UsersList() {
   const handleConfirmDelete = async (user: User) => {
     try {
       setIsLoadingDelete(true);
-      await getApi().delete(`/users/${user.uuid}`).json();
+      await getApi().delete(`/users/${user.uuid}`);
       setIsLoadingDelete(false);
       setDialog(null);
       fetchUsers(); // Rafraîchir la liste
