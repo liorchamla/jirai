@@ -43,7 +43,7 @@ describe("deleteTeam", () => {
 
     const res = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
+      send: vi.fn(),
     } as unknown as Response;
 
     await deleteTeam(req, res);

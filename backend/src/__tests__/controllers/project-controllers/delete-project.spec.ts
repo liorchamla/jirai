@@ -41,7 +41,7 @@ describe("deleteProject", () => {
     } as unknown as Request;
     const res = {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn(),
+      send: vi.fn(),
     } as unknown as Response;
 
     await deleteProject(req, res);

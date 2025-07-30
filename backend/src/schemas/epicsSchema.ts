@@ -10,6 +10,8 @@ export const epicsSchema = z.object({
   priority: z.enum(["high", "medium", "low", "frozen"], {
     message: "Priority must be one of: high, medium, low, frozen",
   }),
+  createdBy: z.string().optional(),
+  assignedTo: z.string().optional(),
   projectSlug: z.string({ message: "Project slug is required" }),
 });
 
