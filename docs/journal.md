@@ -138,3 +138,12 @@
 - Mise en place du composent Editor de PrimeReact.
 - Vérification de son bon fonctionement.
 - Réctification de l'affichage du détail du projet.
+
+## 18. Backend : Implémentation du CRUD Epic
+
+- Ajout du modèle `epic` dans le schéma Prisma (`backend/prisma/schema.prisma`) avec les champs.
+- Relations établies avec les modèles `User`, `Project` et `Status`.
+- Création des routes REST pour les epics dans `backend/src/routes/epic.router.ts`.
+- Développement des contrôleurs associés dans `backend/src/controllers/epicControllers.ts`.
+- Mise en place des schémas de validation avec Zod dans `backend/src/schemas/epicsSchema.ts`.
+- Rédaction de tests unitaires complets pour chaque endpoint epic.

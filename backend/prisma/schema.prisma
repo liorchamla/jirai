@@ -18,6 +18,8 @@ model User {
 
   createdProjects Project[]    @relation("UserProjects")
   createdTeams    Team[]       @relation("UserTeams")
+  createdEpics    epic[]       @relation("UserEpics")
+  assignedEpics   epic[]       @relation("UserAssignedEpics")
   teams           Team[]
 
   @@map("users")
@@ -34,6 +36,7 @@ model Project {
 
   creator      User          @relation("UserProjects", fields: [createdBy], references: [uuid])
   teams        Team[]
+  epics        epic[]
 
   @@map("projects")
 }
@@ -50,4 +53,35 @@ model Team {
   projects     Project[]
 
   @@map("teams")
+}
+
+model epic {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  priority    String
+  createdBy   String
+  assignedTo  String?
+  projectSlug String
+  statusId    Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  creator     User    @relation("UserEpics", fields: [createdBy], references: [uuid])
+  assignee    User?   @relation("UserAssignedEpics", fields: [assignedTo], references: [uuid])
+  project     Project @relation(fields: [projectSlug], references: [slug])
+  status      Status  @relation(fields: [statusId], references: [id])
+
+  @@map("epics")
+}
+
+model Status {
+  id          Int           @id @default(autoincrement())
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  epics       epic[]
+
+  @@map("status")
 }
