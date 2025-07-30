@@ -51,6 +51,7 @@ describe("getProjectById", () => {
       include: {
         teams: true,
         creator: true,
+        epics: true,
       },
       omit: { createdBy: true },
     });

@@ -43,7 +43,7 @@ describe("updateEpic", () => {
     await prisma.status.create({
       data: {
         id: 1,
-        name: "To Do",
+        name: "thinking",
       },
     });
 
@@ -105,7 +105,7 @@ describe("updateEpic", () => {
     await prisma.status.create({
       data: {
         id: 1,
-        name: "To Do",
+        name: "Thinking",
       },
     });
 
@@ -165,7 +165,7 @@ describe("updateEpic", () => {
     await prisma.status.create({
       data: {
         id: 1,
-        name: "To Do",
+        name: "Thinking",
       },
     });
 

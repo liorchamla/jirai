@@ -7,13 +7,13 @@ import { Request, Response } from "express";
 import slug from "slug";
 
 // ============================================================
-// ====================== GET ALL PROJECTS =====================
+// ====================== GET ALL PROJECTS ====================
 // ============================================================
 
 export async function getAllProjects(req: Request, res: Response) {
   try {
     const projects = await prisma.project.findMany({
-      include: { creator: true, teams: true }, // Include user information if needed
+      include: { creator: true, teams: true, epics: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -33,7 +33,7 @@ export async function getProjectBySlug(req: Request, res: Response) {
   try {
     const project = await prisma.project.findUnique({
       where: { slug },
-      include: { creator: true, teams: true }, // Include user information if needed
+      include: { creator: true, teams: true, epics: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
     });
     if (!project) {

@@ -43,7 +43,7 @@ describe("deleteEpic", () => {
     await prisma.status.create({
       data: {
         id: 1,
-        name: "To Do",
+        name: "thinking",
       },
     });
 
@@ -100,7 +100,7 @@ describe("deleteEpic", () => {
     await deleteEpic(req, res);
 
     // Prisma will throw an error if the record doesn't exist
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error: "Internal server error" });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ error: "Epic not found" });
   });
 });

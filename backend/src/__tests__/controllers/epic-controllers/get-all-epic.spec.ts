@@ -43,7 +43,7 @@ describe("getAllEpics", () => {
     await prisma.status.create({
       data: {
         id: 1,
-        name: "To Do",
+        name: "Thinking",
       },
     });
 
