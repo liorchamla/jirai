@@ -24,7 +24,7 @@ function ProjectDetail() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] mt-9 w-[90%] h-[35rem]">
+      <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] mt-9 w-[90%]">
         <h1 className="text-3xl font-bold mb-12 mt-5">Détail du projet</h1>
         {project ? (
           <div className="space-y-4">
@@ -37,9 +37,11 @@ function ProjectDetail() {
             {project.description && (
               <div className="flex flex-col">
                 <span className="text-2xl">Description</span>
-                <span className="text-lg font-medium text-gray-500 mb-4">
-                  {project.description}
-                </span>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: project.description || "Aucune description",
+                  }}
+                />
               </div>
             )}
             {project.status && (

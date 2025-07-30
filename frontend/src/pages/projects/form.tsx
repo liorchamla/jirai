@@ -12,6 +12,7 @@ import {
   type MultiSelectChangeEvent,
 } from "primereact/multiselect";
 import type { Team } from "../../types/team";
+import { Editor } from "primereact/editor";
 
 interface PropsType {
   project?: Project;
@@ -175,11 +176,11 @@ function ProjectForm({ project, onSubmit }: PropsType) {
         />
       )}
       <label htmlFor="description">Description</label>
-      <InputText
+      <Editor
         id="description"
         placeholder="Description du projet"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onTextChange={(e) => setDescription(e.htmlValue || "")}
       />
       {errorDescription.length > 0 && (
         <Message

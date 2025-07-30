@@ -132,3 +132,9 @@
 - Modification du fichier `auth.ts` avec un AuthContext et un useAuth.
 - Ajout du `AuthContext` sur le fichier `App.tsx`.
 - Vérification du bon fonctionnement du AuthContext.
+
+## 17. Ajout de l'éditeur de PrimeReact
+
+- Mise en place du composent Editor de PrimeReact.
+- Vérification de son bon fonctionement.
+- Réctification de l'affichage du détail du projet.

@@ -204,7 +204,6 @@ function ProjectsList() {
       </div>
       <DataTable value={projects}>
         <Column field="name" header="Project" />
-        <Column field="description" header="Description" />
         <Column body={statusProjectTemplate} header="Status" />
         <Column body={getProjectTeams} header="Teams" />
         <Column body={getProjectActions} header="Actions" />
