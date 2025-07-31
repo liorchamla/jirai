@@ -18,7 +18,7 @@ function UserDetail() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] mt-9 w-[90%]">
+      <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] mt-9 w-[90%] mb-18">
         <h1 className="text-3xl font-bold mb-12 mt-5">
           Détail de l&apos;utilisateur
         </h1>
