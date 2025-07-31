@@ -67,8 +67,9 @@ export async function createEpic(req: Request, res: Response) {
   const { title, description, priority, assignedTo, projectSlug } = result.data;
 
   try {
+    const DEFAULT_STATUS_NAME = "thinking";
     const status = await prisma.status.findFirst({
-      where: { name: "thinking" },
+      where: { name: DEFAULT_STATUS_NAME },
     });
 
     if (!status) {

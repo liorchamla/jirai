@@ -1,3 +1,4 @@
+import type { Epic } from "./epic";
 import type { Team } from "./team";
 import type { User } from "./user";
 
@@ -8,4 +9,5 @@ export interface Project {
   creator: User;
   status: "active" | "archived";
   teams: Team[];
+  epics: Epic[];
 }

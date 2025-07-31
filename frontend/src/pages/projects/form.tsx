@@ -200,9 +200,6 @@ function ProjectForm({ project, onSubmit }: PropsType) {
           setStatus(e.value);
         }}
       />
-      {error && (
-        <Message severity="error" text={error} className="w-full mb-5" />
-      )}
       <label htmlFor="teams">Équipes</label>
       <MultiSelect
         id="teams"
@@ -215,6 +212,9 @@ function ProjectForm({ project, onSubmit }: PropsType) {
         placeholder="Équipes"
         className="mb-4"
       />
+      {error && (
+        <Message severity="error" text={error} className="w-full mb-5" />
+      )}
       <Button
         type="submit"
         label={project ? "Mettre à jour le projet" : "Créer le projet"}
