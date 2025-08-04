@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
-import type { Epic } from "../../types/epic";
+import type { Epic } from "../../types/Epic";
 import { getApi } from "../../utils/api";
 import React, { useEffect, useState } from "react";
 import DOMpurify from "dompurify";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import EpicForm from "./epicForm";
-import PriorityBadge from "../../components/priorityBadge";
+import EpicForm from "./EpicForm";
+import PriorityBadge from "../../components/PriorityBadge";
 
 function EpicDetail() {
   const [epic, setEpic] = useState<Epic | null>(null);

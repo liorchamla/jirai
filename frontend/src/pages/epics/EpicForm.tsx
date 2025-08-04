@@ -1,12 +1,12 @@
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import type { Epic } from "../../types/epic";
+import type { Epic } from "../../types/Epic";
 import { useState, type FormEvent, useEffect } from "react";
 import { getApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import type { WretchError } from "wretch";
-import type { Project } from "../../types/project";
+import type { Project } from "../../types/Project";
 import { Message } from "primereact/message";
 import { Editor } from "primereact/editor";
 

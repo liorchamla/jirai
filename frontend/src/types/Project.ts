@@ -1,6 +1,6 @@
-import type { Epic } from "./epic";
-import type { Team } from "./team";
-import type { User } from "./user";
+import type { Epic } from "./Epic";
+import type { Team } from "./Team";
+import type { User } from "./User";
 
 export interface Project {
   slug: string;

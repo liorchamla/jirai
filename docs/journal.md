@@ -156,3 +156,13 @@
 - Mise en place de l'éditeur PrimeReact pour la description des epics avec formatage riche (gras, italique, souligné).
 - Ajout de la route pour visualiser le détail d'un epic (`/projects/:slug/epics/:id`) dans `App.tsx`.
 - Configuration des appels API pour les opérations CRUD epics (création, lecture, modification) via `wretch` dans le frontend.
+
+## 20. Refactoring du frontend : structure et nommage (Lior Chamla)
+
+- Uniformisation du nommage des fichiers de composants, pages et types selon les conventions du README (PascalCase pour les composants, pages et types).
+- Renommage des fichiers du dossier `types` : `user.ts`, `project.ts`, `epic.ts`, `team.ts` → `User.ts`, `Project.ts`, `Epic.ts`, `Team.ts`.
+- Renommage des fichiers du dossier `pages` pour chaque entité :
+  - `users-list.tsx` → `UsersList.tsx`, `form.tsx` → `Form.tsx`, `login.tsx` → `Login.tsx`, `detail.tsx` → `Detail.tsx` (idem pour projects, teams, epics).
+- Correction de tous les imports dans le frontend pour respecter la casse et la nouvelle convention.
+- Mise à jour du README du frontend pour expliciter les conventions de nommage et la structure des dossiers.
+- Vérification de la cohérence globale et redémarrage du serveur de développement pour éviter les erreurs liées à la casse.

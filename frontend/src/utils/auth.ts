@@ -1,4 +1,4 @@
-import type { JwtPayload } from "../types/user";
+import type { JwtPayload } from "../types/User";
 import { jwtDecode } from "jwt-decode";
 import { getApi, setToken } from "./api";
 import { createContext, useState } from "react";

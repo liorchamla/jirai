@@ -4,10 +4,10 @@ import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import type { Project } from "../../types/project";
+import type { Project } from "../../types/Project";
 import { Tag } from "primereact/tag";
 import { Dialog } from "primereact/dialog";
-import ProjectForm from "./form";
+import ProjectForm from "./Form";
 import { Toast } from "primereact/toast";
 import { AuthContext } from "../../utils/auth";
 

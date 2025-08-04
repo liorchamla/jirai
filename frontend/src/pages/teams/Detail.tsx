@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getApi } from "../../utils/api";
-import type { Team } from "../../types/team";
+import type { Team } from "../../types/Team";
 
 interface DetailTeam {
   team?: Team;

@@ -2,7 +2,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useState, type FormEvent } from "react";
 import { getApi } from "../../utils/api";
-import type { Team } from "../../types/team";
+import type { Team } from "../../types/Team";
 import { useNavigate } from "react-router-dom";
 import type { WretchError } from "wretch";
 import { Message } from "primereact/message";

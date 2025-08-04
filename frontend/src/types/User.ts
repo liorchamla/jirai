@@ -1,4 +1,4 @@
-import type { Team } from "./team";
+import type { Team } from "./Team";
 
 export interface User {
   uuid: string;

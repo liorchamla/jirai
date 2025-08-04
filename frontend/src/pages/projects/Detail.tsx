@@ -1,13 +1,13 @@
 import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getApi } from "../../utils/api";
-import type { Project } from "../../types/project";
-import type { Epic } from "../../types/epic";
+import type { Project } from "../../types/Project";
+import type { Epic } from "../../types/Epic";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import EpicForm from "../epics/epicForm";
+import EpicForm from "../epics/EpicForm";
 import DOMpurify from "dompurify";
-import PriorityBadge from "../../components/priorityBadge";
+import PriorityBadge from "../../components/PriorityBadge";
 
 interface DetailProject {
   project?: Project;
