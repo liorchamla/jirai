@@ -1,8 +1,10 @@
 import prisma from "../src/utils/prisma";
 import argon2 from "argon2";
-import { faker } from "@faker-js/faker";
+import { fakerFR as faker } from "@faker-js/faker";
 
 // On supprime les données existantes
+await prisma.epic.deleteMany();
+await prisma.status.deleteMany();
 await prisma.team.deleteMany();
 await prisma.project.deleteMany();
 await prisma.user.deleteMany();
@@ -91,4 +93,88 @@ for (const projectData of projectsData) {
       teams: { connect: teams.map((team) => ({ slug: team.slug })) },
     },
   });
+}
+
+// On crée les statuts pour les EPICs
+const statuses = await prisma.status.createManyAndReturn({
+  data: [
+    { name: "thinking" },
+    { name: "ready" },
+    { name: "in_progress" },
+    { name: "done" },
+    { name: "canceled" },
+  ],
+});
+
+// On récupère tous les projets créés
+const projects = await prisma.project.findMany();
+
+// On récupère tous les utilisateurs pour les assigner aux EPICs
+const allUsers = await prisma.user.findMany();
+
+// On crée des EPICs pour chaque projet (entre 0 et 5 EPICs par projet)
+for (const project of projects) {
+  const numberOfEpics = faker.number.int({ min: 0, max: 5 });
+
+  // Titres d'EPICs réalistes en français
+  const epicTitles = [
+    "Authentification utilisateur",
+    "Gestion des droits d'accès",
+    "Interface de tableau de bord",
+    "Système de notifications",
+    "API REST complète",
+    "Optimisation des performances",
+    "Tests automatisés",
+    "Documentation technique",
+    "Migration de données",
+    "Sécurisation des endpoints",
+    "Interface mobile responsive",
+    "Système de cache",
+    "Gestion des erreurs",
+    "Monitoring et logs",
+    "Déploiement automatisé",
+  ];
+
+  // Descriptions réalistes en français
+  const epicDescriptions = [
+    "Mise en place d'un système d'authentification sécurisé avec gestion des sessions utilisateurs.",
+    "Développement d'une interface intuitive permettant aux utilisateurs de naviguer facilement.",
+    "Création d'une API robuste pour permettre l'intégration avec d'autres services.",
+    "Implémentation d'un système de notifications en temps réel pour améliorer l'expérience utilisateur.",
+    "Optimisation des performances de l'application pour réduire les temps de chargement.",
+    "Mise en place d'une suite de tests automatisés pour garantir la qualité du code.",
+    "Développement d'une interface responsive adaptée aux appareils mobiles.",
+    "Création d'un tableau de bord avec des métriques et indicateurs de performance.",
+    "Implémentation d'un système de cache pour améliorer les performances de l'application.",
+    "Mise en place d'un système de monitoring et de logs pour faciliter le débogage.",
+    "Sécurisation de l'application contre les vulnérabilités courantes.",
+    "Développement d'une documentation technique complète pour l'équipe de développement.",
+    "Migration des données existantes vers la nouvelle architecture.",
+    "Mise en place d'un pipeline de déploiement automatisé.",
+    "Amélioration de l'expérience utilisateur sur les fonctionnalités principales.",
+  ];
+
+  for (let i = 0; i < numberOfEpics; i++) {
+    const assignedUser = faker.helpers.maybe(
+      () => faker.helpers.arrayElement(allUsers),
+      { probability: 0.7 }
+    );
+
+    await prisma.epic.create({
+      data: {
+        title: faker.helpers.arrayElement(epicTitles),
+        description: faker.helpers.arrayElement(epicDescriptions),
+        priority: faker.helpers.arrayElement([
+          "frozen",
+          "low",
+          "medium",
+          "high",
+        ]),
+        createdBy: user.uuid,
+        assignedTo: assignedUser?.uuid,
+        projectSlug: project.slug,
+        statusId: faker.helpers.arrayElement(statuses).id,
+      },
+    });
+  }
 }

@@ -9,6 +9,7 @@ import ProjectDetail from "./pages/projects/detail";
 import TeamsList from "./pages/teams/teams-list";
 import TeamDetail from "./pages/teams/detail";
 import { AuthContext, useAuth } from "./utils/auth";
+import EpicDetail from "./pages/epics/detail";
 
 function App() {
   const { userInfo, authenticate } = useAuth();
@@ -25,6 +26,7 @@ function App() {
           <Route path="/projects/:slug" element={<ProjectDetail />} />
           <Route path="/teams" element={<TeamsList />} />
           <Route path="/teams/:slug" element={<TeamDetail />} />
+          <Route path="/projects/:slug/epics/:id" element={<EpicDetail />} />
         </Routes>
       </main>
     </AuthContext.Provider>

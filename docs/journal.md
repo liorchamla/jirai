@@ -147,3 +147,12 @@
 - Développement des contrôleurs associés dans `backend/src/controllers/epicControllers.ts`.
 - Mise en place des schémas de validation avec Zod dans `backend/src/schemas/epicsSchema.ts`.
 - Rédaction de tests unitaires complets pour chaque endpoint epic.
+
+## 19. Frontend : Implémentation de création et modification des EPIC et visualisation de leur détails
+
+- Création du composant `EpicForm` (`frontend/src/pages/epics/epicForm.tsx`) pour la création et modification d'epics avec validation côté client.
+- Développement de la page de détail d'epic (`frontend/src/pages/epics/detail.tsx`) avec possibilité de modification via dialog modal.
+- Intégration des epics dans la page de détail de projet (`frontend/src/pages/projects/detail.tsx`) avec affichage de la liste et actions (ajout, modification).
+- Mise en place de l'éditeur PrimeReact pour la description des epics avec formatage riche (gras, italique, souligné).
+- Ajout de la route pour visualiser le détail d'un epic (`/projects/:slug/epics/:id`) dans `App.tsx`.
+- Configuration des appels API pour les opérations CRUD epics (création, lecture, modification) via `wretch` dans le frontend.
