@@ -92,6 +92,17 @@ function TeamsList() {
     );
   };
 
+  const getTeamName = (team: Team) => {
+    return (
+      <Link
+        to={`/teams/${team.slug}`}
+        className="hover:text-blue-800 hover:underline font-medium"
+      >
+        {team.name}
+      </Link>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -164,7 +175,7 @@ function TeamsList() {
         </div>
       </Dialog>
       <DataTable value={teams}>
-        <Column field="name" header="Team" />
+        <Column body={getTeamName} header="Team" />
         <Column body={getTeamActions} header="Actions" />
       </DataTable>
       <Link to="/login" className="btn btn-primary">

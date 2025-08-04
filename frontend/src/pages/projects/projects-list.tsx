@@ -133,6 +133,17 @@ function ProjectsList() {
     );
   };
 
+  const getProjectName = (project: Project) => {
+    return (
+      <Link
+        to={`/projects/${project.slug}`}
+        className="hover:text-blue-800 hover:underline font-medium"
+      >
+        {project.name}
+      </Link>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -203,7 +214,7 @@ function ProjectsList() {
         </Dialog>
       </div>
       <DataTable value={projects}>
-        <Column field="name" header="Project" />
+        <Column body={getProjectName} header="Project" />
         <Column body={statusProjectTemplate} header="Status" />
         <Column body={getProjectTeams} header="Teams" />
         <Column body={getProjectActions} header="Actions" />
