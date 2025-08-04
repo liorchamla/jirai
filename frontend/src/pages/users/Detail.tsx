@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { User } from "../../types/user";
+import type { User } from "../../types/User";
 import { getApi } from "../../utils/api";
 
 function UserDetail() {

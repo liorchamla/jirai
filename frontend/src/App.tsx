@@ -1,15 +1,16 @@
 import "./App.css";
-import Header from "./components/header";
+import Header from "./components/Header";
 import { Routes, Route } from "react-router-dom";
-import Login from "./pages/users/login";
-import UsersList from "./pages/users/users-list";
-import ProjectsList from "./pages/projects/projects-list";
-import UserDetail from "./pages/users/detail";
-import ProjectDetail from "./pages/projects/detail";
-import TeamsList from "./pages/teams/teams-list";
-import TeamDetail from "./pages/teams/detail";
 import { AuthContext, useAuth } from "./utils/auth";
-import EpicDetail from "./pages/epics/detail";
+
+import Login from "./pages/users/Login";
+import UsersList from "./pages/users/UsersList";
+import ProjectsList from "./pages/projects/ProjectsList";
+import UserDetail from "./pages/users/Detail";
+import ProjectDetail from "./pages/projects/Detail";
+import TeamsList from "./pages/teams/TeamsList";
+import TeamDetail from "./pages/teams/Detail";
+import EpicDetail from "./pages/epics/Detail";
 
 function App() {
   const { userInfo, authenticate } = useAuth();

@@ -4,8 +4,8 @@ import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { useCallback, useEffect, useRef, useState } from "react";
-import UserForm from "./form";
-import type { User } from "../../types/user";
+import UserForm from "./Form";
+import type { User } from "../../types/User";
 import { getApi } from "../../utils/api";
 import { Toast } from "primereact/toast";
 

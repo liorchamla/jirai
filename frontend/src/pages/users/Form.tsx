@@ -5,12 +5,12 @@ import {
   type MultiSelectChangeEvent,
 } from "primereact/multiselect";
 import { useEffect, useState, type FormEvent } from "react";
-import type { User } from "../../types/user";
+import type { User } from "../../types/User";
 import { useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import { Message } from "primereact/message";
 import type { WretchError } from "wretch";
-import type { Team } from "../../types/team";
+import type { Team } from "../../types/Team";
 
 interface PropsType {
   user?: User;

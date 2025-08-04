@@ -1,69 +1,58 @@
-# React + TypeScript + Vite
+# JirAI Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est le frontend d’une application de gestion de projets, développée avec React, TypeScript et Vite.
 
-Currently, two official plugins are available:
+## Contexte
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+JirAI est une application collaborative permettant de gérer des projets, des équipes, des utilisateurs et des epics. L’interface utilisateur est conçue pour être moderne, accessible et facilement maintenable.
 
-## Expanding the ESLint configuration
+## Stack technique
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- TypeScript
+- Vite
+- PrimeReact
+- Cypress
+- ESLint
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Structure des dossiers
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```
+frontend/
+  src/
+    components/      # Composants réutilisables (Header, PriorityBadge, etc.)
+    pages/           # Pages de l’application, organisées par entité métier
+    types/           # Types TypeScript partagés
+    utils/           # Fonctions utilitaires (API, auth, etc.)
+    assets/          # Images, icônes, etc.
+    styles/          # Styles globaux (si besoin)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Conventions de nommage
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+- **Composants React** : PascalCase (ex : `Header.tsx`, `PriorityBadge.tsx`)
+- **Hooks personnalisés** : camelCase, suffixés par `use` (ex : `useAuth.ts`)
+- **Utilitaires** : camelCase (ex : `api.ts`, `auth.ts`)
+- **Types** : PascalCase (ex : `User.ts`, `Epic.ts`)
+- **Pages** : PascalCase (ex : `Detail.tsx`, `Form.tsx`)
+- **Dossiers** : kebab-case ou camelCase, selon la cohérence du projet
 
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+## Bonnes pratiques
+
+- Les composants réutilisables sont placés dans `components/`.
+- Les pages sont placées dans `pages/`, regroupées par entité métier (users, projects, epics, teams).
+- Les types TypeScript sont centralisés dans `types/`.
+- Les utilitaires sont dans `utils/`.
+- Les imports de composants doivent respecter le nommage (ex : `import Header from "../components/Header"`).
+- Les tests unitaires peuvent être placés dans un dossier `__tests__/` ou à côté du fichier testé.
+
+## Exemple d’import
+
+```tsx
+import Header from "../components/Header";
+import PriorityBadge from "../components/PriorityBadge";
 ```
+
+## Contribution
+
+Merci de respecter ces conventions pour faciliter la maintenance et l’évolution du projet. En cas de doute, demande à l’équipe ou consulte ce README.

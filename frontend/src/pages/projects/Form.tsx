@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import type { Project } from "../../types/project";
+import type { Project } from "../../types/Project";
 import type { WretchError } from "wretch";
 import { Message } from "primereact/message";
 import { Dropdown } from "primereact/dropdown";
@@ -11,7 +11,7 @@ import {
   MultiSelect,
   type MultiSelectChangeEvent,
 } from "primereact/multiselect";
-import type { Team } from "../../types/team";
+import type { Team } from "../../types/Team";
 import { Editor } from "primereact/editor";
 
 interface PropsType {

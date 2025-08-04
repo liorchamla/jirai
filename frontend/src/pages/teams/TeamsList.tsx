@@ -3,10 +3,10 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Link, useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
-import type { Team } from "../../types/team";
+import type { Team } from "../../types/Team";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
-import TeamForm from "./form";
+import TeamForm from "./Form";
 import { Toast } from "primereact/toast";
 import { AuthContext } from "../../utils/auth";
 
