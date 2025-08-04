@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import EpicForm from "../epics/epicForm";
 import DOMpurify from "dompurify";
+import PriorityBadge from "../../components/priorityBadge";
 
 interface DetailProject {
   project?: Project;
@@ -132,26 +133,7 @@ function ProjectDetail() {
                       </div>
                     </NavLink>
                     <div className="flex items-center gap-2">
-                      {epic.priority === "frozen" && (
-                        <span className="p-1 text-white bg-blue-500 rounded">
-                          {epic.priority}
-                        </span>
-                      )}
-                      {epic.priority === "low" && (
-                        <span className="p-1 text-white bg-green-700 rounded">
-                          {epic.priority}
-                        </span>
-                      )}
-                      {epic.priority === "medium" && (
-                        <span className="p-1 text-white bg-orange-300 rounded">
-                          {epic.priority}
-                        </span>
-                      )}
-                      {epic.priority === "high" && (
-                        <span className="p-1 text-white bg-red-700 rounded">
-                          {epic.priority}
-                        </span>
-                      )}
+                      <PriorityBadge priority={epic.priority} />
                     </div>
                     <div className="flex justify-end">
                       <Button

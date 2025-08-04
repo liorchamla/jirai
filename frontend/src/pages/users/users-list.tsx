@@ -120,6 +120,17 @@ function UsersList() {
     );
   };
 
+  const getUserName = (user: User) => {
+    return (
+      <Link
+        to={`/users/${user.uuid}`}
+        className="hover:text-blue-800 hover:underline font-medium"
+      >
+        {user.username}
+      </Link>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 py-5 px-10">
       <div className="flex items-center justify-between">
@@ -195,7 +206,7 @@ function UsersList() {
         </Dialog>
       </div>
       <DataTable value={users} loading={isLoading}>
-        <Column field="username" header="Username" />
+        <Column body={getUserName} header="Username" />
         <Column body={getUserEmail} header="Email" />
         <Column field="position" header="Position" />
         <Column body={getUserTeams} header="Teams" />
