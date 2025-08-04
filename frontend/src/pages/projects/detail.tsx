@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getApi } from "../../utils/api";
 import type { Project } from "../../types/project";
 import type { Epic } from "../../types/epic";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import EpicForm from "./epicForm";
+import EpicForm from "../epics/epicForm";
 import DOMpurify from "dompurify";
 
 interface DetailProject {
@@ -107,7 +107,6 @@ function ProjectDetail() {
           onHide={() => setDialog(null)}
         >
           <EpicForm
-            project={project}
             epic={selectedEpic}
             onSubmit={() => {
               setDialog(null);
@@ -123,39 +122,48 @@ function ProjectDetail() {
                   key={epic.id}
                   className={`p-2 hover:bg-gray-100 rounded-lg border border-transparent transition-all duration-200 cursor-pointer`}
                 >
-                  <div className="flex flex-wrap p-2 items-center gap-3">
-                    <div className="flex-1 flex flex-column gap-1">
-                      <span className="font-bold">EPIC : {epic.title}</span>
+                  <div className="flex flex-row items-center justify-between w-full">
+                    <NavLink
+                      to={`/projects/${project.slug}/epics/${epic.id}`}
+                      className="flex-1"
+                    >
+                      <div className="p-2">
+                        <span className="font-bold">EPIC : {epic.title}</span>
+                      </div>
+                    </NavLink>
+                    <div className="flex items-center gap-2">
+                      {epic.priority === "frozen" && (
+                        <span className="p-1 text-white bg-blue-500 rounded">
+                          {epic.priority}
+                        </span>
+                      )}
+                      {epic.priority === "low" && (
+                        <span className="p-1 text-white bg-green-700 rounded">
+                          {epic.priority}
+                        </span>
+                      )}
+                      {epic.priority === "medium" && (
+                        <span className="p-1 text-white bg-orange-300 rounded">
+                          {epic.priority}
+                        </span>
+                      )}
+                      {epic.priority === "high" && (
+                        <span className="p-1 text-white bg-red-700 rounded">
+                          {epic.priority}
+                        </span>
+                      )}
                     </div>
-                    {epic.priority === "frozen" && (
-                      <span className="p-1 text-white bg-blue-500 rounded">
-                        {epic.priority}
-                      </span>
-                    )}
-                    {epic.priority === "low" && (
-                      <span className="p-1 text-white bg-green-700 rounded">
-                        {epic.priority}
-                      </span>
-                    )}
-                    {epic.priority === "medium" && (
-                      <span className="p-1 text-white bg-orange-300 rounded">
-                        {epic.priority}
-                      </span>
-                    )}
-                    {epic.priority === "high" && (
-                      <span className="p-1 text-white bg-red-700 rounded">
-                        {epic.priority}
-                      </span>
-                    )}
-                    <Button
-                      onClick={() => {
-                        setSelectedEpic(epic);
-                        setDialog("update");
-                      }}
-                      icon="pi pi-pencil"
-                      severity="success"
-                      text
-                    />
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={() => {
+                          setSelectedEpic(epic);
+                          setDialog("update");
+                        }}
+                        icon="pi pi-pencil"
+                        severity="success"
+                        text
+                      />
+                    </div>
                   </div>
                 </li>
               ))}
