@@ -21,6 +21,8 @@ model User {
   createdEpics    epic[]       @relation("UserEpics")
   assignedEpics   epic[]       @relation("UserAssignedEpics")
   teams           Team[]
+  createdTickets  ticket[]     @relation("UserTickets")
+  assignedTickets  ticket[]     @relation("UserAssignedTickets")
 
   @@map("users")
 }
@@ -71,8 +73,29 @@ model epic {
   assignee    User?   @relation("UserAssignedEpics", fields: [assignedTo], references: [uuid])
   project     Project @relation(fields: [projectSlug], references: [slug])
   status      Status  @relation(fields: [statusId], references: [id])
+  tickets     ticket[]
 
   @@map("epics")
+}
+
+model ticket {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  priority    String
+  createdBy   String
+  assignedTo  String?
+  epicId      Int
+  statusId    Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  creator     User    @relation("UserTickets", fields: [createdBy], references: [uuid])
+  assignee    User?   @relation("UserAssignedTickets", fields: [assignedTo], references: [uuid])
+  epic        epic    @relation(fields: [epicId], references: [id])
+  status      Status  @relation(fields: [statusId], references: [id])
+
+  @@map("tickets")
 }
 
 model Status {
@@ -82,6 +105,7 @@ model Status {
   updatedAt   DateTime      @updatedAt
 
   epics       epic[]
+  tickets     ticket[]
 
   @@map("status")
 }
