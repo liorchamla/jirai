@@ -1,62 +1,59 @@
 import { Request, Response } from "express";
-import { epicsSchema, updateEpicSchema } from "../schemas/epicsSchema";
+import { ticketsSchema, updateTicketSchema } from "../schemas/ticketsSchemas";
 import prisma from "../utils/prisma";
 
 // ============================================================
-// ====================== GET ALL EPICS =======================
+// ====================== GET ALL TICKETS =====================
 // ============================================================
 
-export async function getAllEpics(req: Request, res: Response) {
+export async function getAllTickets(req: Request, res: Response) {
   try {
-    const epics = await prisma.epic.findMany({
+    const tickets = await prisma.ticket.findMany({
       include: { creator: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
-    res.status(200).json(epics);
+    res.status(200).json(tickets);
   } catch (error) {
-    console.error("Error fetching epics:", error);
+    console.error("Error fetching tickets:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
 // ============================================================
-// ====================== GET EPIC BY ID ======================
+// ====================== GET TICKET BY ID ======================
 // ============================================================
 
-export async function getEpicById(req: Request, res: Response) {
+export async function getTicketById(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   try {
     // If id is NaN (invalid), findUnique will return null
-    const epic = isNaN(id)
+    const ticket = isNaN(id)
       ? null
-      : await prisma.epic.findUnique({
+      : await prisma.ticket.findUnique({
           where: { id },
-          include: {
-            creator: true, // Include user information if needed
-            tickets: true, // Include tickets associated with this epic
-          },
+          include: { creator: true }, // Include user information if needed
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });
 
-    if (!epic) {
-      res.status(404).json({ error: "Epic not found" });
+    if (!ticket) {
+      res.status(404).json({ error: "Ticket not found" });
       return;
     }
-    res.status(200).json(epic);
+    res.status(200).json(ticket);
   } catch (error) {
-    console.error("Error fetching epic:", error);
+    console.error("Error fetching ticket:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
 // ============================================================
-// ====================== CREATE EPIC =========================
+// ====================== CREATE TICKET =========================
 // ============================================================
 
-export async function createEpic(req: Request, res: Response) {
-  const result = epicsSchema.safeParse(req.body);
+export async function createTicket(req: Request, res: Response) {
+  const result = ticketsSchema.safeParse(req.body);
   if (!result.success) {
     res.status(422).json({ error: result.error });
     return;
@@ -67,7 +64,7 @@ export async function createEpic(req: Request, res: Response) {
     return;
   }
 
-  const { title, description, priority, assignedTo, projectSlug } = result.data;
+  const { title, description, priority, assignedTo, epicId } = result.data;
 
   try {
     const DEFAULT_STATUS_NAME = "thinking";
@@ -80,31 +77,31 @@ export async function createEpic(req: Request, res: Response) {
       return;
     }
 
-    const epic = await prisma.epic.create({
+    const ticket = await prisma.ticket.create({
       data: {
         title,
         description,
         priority,
         assignedTo,
-        projectSlug,
+        epicId,
         createdBy: req.user.uuid,
         statusId: status.id, // Use the found status ID
       },
     });
-    res.status(201).json(epic);
+    res.status(201).json(ticket);
   } catch (error) {
-    console.error("Error creating epic:", error);
+    console.error("Error creating ticket:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
 // ============================================================
-// ====================== UPDATE EPIC =========================
+// ====================== UPDATE TICKET =========================
 // ============================================================
 
-export async function updateEpic(req: Request, res: Response) {
+export async function updateTicket(req: Request, res: Response) {
   const id = Number(req.params.id);
-  const result = updateEpicSchema.safeParse(req.body);
+  const result = updateTicketSchema.safeParse(req.body);
   if (!result.success) {
     res.status(422).json({ error: result.error });
     return;
@@ -115,66 +112,56 @@ export async function updateEpic(req: Request, res: Response) {
     return;
   }
 
-  const DEFAULT_STATUS_NAME = result.data.statusId;
-  const foundStatus = await prisma.status.findFirst({
-    where: { name: DEFAULT_STATUS_NAME },
-  });
-
-  const { title, description, priority, createdBy, assignedTo, projectSlug } =
-    result.data;
-
-  const statusId = foundStatus?.id;
+  const { title, description, priority, assignedTo, epicId } = result.data;
 
   try {
-    const existingEpic = await prisma.epic.findUnique({
+    const existingTicket = await prisma.ticket.findUnique({
       where: { id },
     });
-    if (!existingEpic) {
-      res.status(404).json({ error: "Epic not found" });
+    if (!existingTicket) {
+      res.status(404).json({ error: "Ticket not found" });
       return;
     }
 
-    const epic = await prisma.epic.update({
+    const ticket = await prisma.ticket.update({
       where: { id },
       data: {
         title,
         description,
         priority,
-        createdBy,
         assignedTo,
-        projectSlug,
-        statusId,
+        epicId,
       },
     });
-    res.status(200).json(epic);
+    res.status(200).json(ticket);
   } catch (error) {
-    console.error("Error updating epic:", error);
+    console.error("Error updating ticket:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
 
 // ============================================================
-// ====================== DELETE EPIC =========================
+// ====================== DELETE TICKET =========================
 // ============================================================
 
-export async function deleteEpic(req: Request, res: Response) {
+export async function deleteTicket(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   try {
-    const existingEpic = await prisma.epic.findUnique({
+    const existingTicket = await prisma.ticket.findUnique({
       where: { id },
     });
-    if (!existingEpic) {
-      res.status(404).json({ error: "Epic not found" });
+    if (!existingTicket) {
+      res.status(404).json({ error: "Ticket not found" });
       return;
     }
 
-    const epic = await prisma.epic.delete({
+    const ticket = await prisma.ticket.delete({
       where: { id },
     });
-    res.status(200).json({ message: "Epic deleted successfully", epic });
+    res.status(200).json({ message: "Ticket deleted successfully", ticket });
   } catch (error) {
-    console.error("Error deleting epic:", error);
+    console.error("Error deleting ticket:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
