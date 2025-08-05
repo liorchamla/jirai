@@ -1,0 +1,18 @@
+import z from "zod";
+
+export const ticketsSchema = z.object({
+  title: z
+    .string({ message: "Title is required" })
+    .min(2, { message: "Title must be at least 2 characters long" }),
+  description: z
+    .string({ message: "Description is required" })
+    .min(2, { message: "Description must be at least 2 characters long" }),
+  priority: z.enum(["high", "medium", "low", "frozen"], {
+    message: "Priority must be one of: high, medium, low, frozen",
+  }),
+  createdBy: z.string().optional(),
+  assignedTo: z.string().optional(),
+  epicId: z.number({ message: "Epic ID is required" }),
+});
+
+export const updateTicketSchema = ticketsSchema.partial();
