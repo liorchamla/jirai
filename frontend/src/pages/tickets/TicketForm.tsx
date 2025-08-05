@@ -9,17 +9,19 @@ import type { WretchError } from "wretch";
 import type { Project } from "../../types/Project";
 import { Message } from "primereact/message";
 import { Editor } from "primereact/editor";
+import type { Ticket } from "../../types/Ticket";
 
 interface PropsType {
   project?: Project;
   epic?: Epic | null;
+  ticket?: Ticket | null;
   onSubmit: () => void;
 }
-function EpicForm({ project, epic, onSubmit }: PropsType) {
-  const [title, setTitle] = useState(epic?.title || "");
-  const [description, setDescription] = useState(epic?.description || "");
-  const [priority, setPriority] = useState<Epic["priority"]>(
-    epic?.priority || "frozen"
+function TicketForm({ epic, ticket, onSubmit }: PropsType) {
+  const [title, setTitle] = useState(ticket?.title || "");
+  const [description, setDescription] = useState(ticket?.description || "");
+  const [priority, setPriority] = useState<Ticket["priority"]>(
+    ticket?.priority || "frozen"
   );
   const [error, setError] = useState<string | null>(null);
   const [errorTitle, setErrorTitle] = useState<string[]>([]);
@@ -29,40 +31,40 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
 
   // Réinitialiser les champs quand l'epic change
   useEffect(() => {
-    setTitle(epic?.title || "");
-    setDescription(epic?.description || "");
-    setPriority(epic?.priority || "frozen");
+    setTitle(ticket?.title || "");
+    setDescription(ticket?.description || "");
+    setPriority(ticket?.priority || "frozen");
     setError(null);
     setErrorTitle([]);
     setErrorDescription([]);
-  }, [epic]);
+  }, [ticket]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      if (epic) {
-        updateEpic();
+      if (ticket) {
+        updateTicket();
       } else {
-        createNewEpic();
+        createNewTicket();
       }
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
       setError(
-        "Une erreur s'est produite lors de la création ou la modification de l'EPIC."
+        "Une erreur s'est produite lors de la création ou la modification du TICKET."
       );
     }
   };
 
-  const createNewEpic = () => {
+  const createNewTicket = () => {
     try {
       getApi()
-        .url("/epics")
+        .url("/tickets")
         .post({
           title,
           description,
           priority,
-          projectSlug: project?.slug,
+          epicId: epic?.id,
         })
         .unauthorized(() => {
           navigate("/login");
@@ -79,14 +81,14 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
-      setError("Une erreur s'est produite lors de la création de l'EPIC.");
+      setError("Une erreur s'est produite lors de la création du TICKET.");
     }
   };
 
-  const updateEpic = () => {
+  const updateTicket = () => {
     try {
       getApi()
-        .url(`/epics/${epic?.id}`)
+        .url(`/tickets/${ticket?.id}`)
         .patch({
           title,
           description,
@@ -107,7 +109,7 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
-      setError("Une erreur s'est produite lors de la modification de l'EPIC.");
+      setError("Une erreur s'est produite lors de la modification du TICKET.");
     }
   };
 
@@ -142,10 +144,10 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
-      <label htmlFor="title">Titre de l&apos;EPIC</label>
+      <label htmlFor="title">Titre du TICKET</label>
       <InputText
         id="title"
-        placeholder="Titre de l'EPIC"
+        placeholder="Titre du TICKET"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
@@ -159,7 +161,7 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
       <label htmlFor="description">Description</label>
       <Editor
         id="description"
-        placeholder="Description de l'EPIC"
+        placeholder="Description du TICKET"
         value={description}
         onTextChange={(e) => setDescription(e.htmlValue || "")}
         headerTemplate={header}
@@ -186,9 +188,12 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
       {error && (
         <Message severity="error" text={error} className="w-full mb-5" />
       )}
-      <Button type="submit" label={epic ? "Modifier l'EPIC" : "Créer l'EPIC"} />
+      <Button
+        type="submit"
+        label={ticket ? "Modifier le TICKET" : "Créer le TICKET"}
+      />
     </form>
   );
 }
 
-export default EpicForm;
+export default TicketForm;

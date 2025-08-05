@@ -49,11 +49,16 @@ function UserDetail() {
             {user.teams && user.teams.length > 0 && (
               <div className="flex flex-col">
                 <span className="text-2xl">Équipes</span>
-                <ul className="list-disc list-inside text-lg font-medium text-gray-500 mb-4">
+                <div className="mb-4 mt-3">
                   {user.teams.map((team, idx) => (
-                    <li key={idx}>{team.name}</li>
+                    <span
+                      key={idx}
+                      className="bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2"
+                    >
+                      {team.name}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>

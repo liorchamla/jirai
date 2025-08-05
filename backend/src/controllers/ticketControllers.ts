@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ticketsSchema, updateTicketSchema } from "../schemas/ticketsSchemas";
 import prisma from "../utils/prisma";
+import { isValidId } from "../utils/validation";
 
 // ============================================================
 // ====================== GET ALL TICKETS =====================
@@ -28,8 +29,8 @@ export async function getTicketById(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   try {
-    // If id is NaN (invalid), findUnique will return null
-    const ticket = isNaN(id)
+    // If id is invalid, findUnique will return null
+    const ticket = !isValidId(id)
       ? null
       : await prisma.ticket.findUnique({
           where: { id },

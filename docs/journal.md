@@ -166,3 +166,18 @@
 - Correction de tous les imports dans le frontend pour respecter la casse et la nouvelle convention.
 - Mise à jour du README du frontend pour expliciter les conventions de nommage et la structure des dossiers.
 - Vérification de la cohérence globale et redémarrage du serveur de développement pour éviter les erreurs liées à la casse.
+
+## 21. Implémentation des TICKET avec leur création, visualisation et modification liés à un EPIC
+
+- Ajout du modèle `ticket` dans le schéma Prisma (`backend/prisma/schema.prisma`) avec les champs requis (titre, description, priorité, epicId, etc.).
+- Relations établies avec les modèles `User`, `Epic` et `Status`.
+- Création des routes REST pour les tickets dans `backend/src/routes/ticket.router.ts` (GET, POST, PATCH).
+- Développement des contrôleurs associés dans `backend/src/controllers/ticketControllers.ts` pour gérer le CRUD complet.
+- Mise en place des schémas de validation avec Zod dans `backend/src/schemas/ticketsSchemas.ts`.
+- Rédaction de tests unitaires complets pour chaque endpoint ticket.
+- Création du composant `TicketForm` (`frontend/src/pages/tickets/TicketForm.tsx`) pour la création et modification de tickets avec validation côté client.
+- Développement de la page de détail de ticket (`frontend/src/pages/tickets/Detail.tsx`) avec possibilité de modification via dialog modal.
+- Intégration des tickets dans la page de détail d'epic (`frontend/src/pages/epics/Detail.tsx`) avec affichage de la liste et actions (ajout, modification).
+- Ajout de la route pour visualiser le détail d'un ticket (`/ticket/:id`) dans `App.tsx`.
+- Configuration des appels API pour les opérations CRUD tickets via `wretch` dans le frontend.
+- Mise en place de l'éditeur PrimeReact pour la description des tickets avec formatage riche (gras, italique, souligné).
