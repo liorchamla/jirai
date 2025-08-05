@@ -1,9 +1,6 @@
-import type { Ticket } from "./Ticket";
-
-export interface Epic {
+export interface Ticket {
   id: number;
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | "frozen";
-  tickets: Ticket[];
 }

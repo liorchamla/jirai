@@ -38,7 +38,7 @@ function ProjectDetail() {
           <div className="space-y-4 mb-6">
             <div className="flex flex-col">
               <span className="text-2xl">Nom du projet</span>
-              <span className="text-lg font-semibold text-emerald-500 mb-4">
+              <span className="font-extrabold text-2xl mb-3">
                 {project.name}
               </span>
             </div>
@@ -46,6 +46,7 @@ function ProjectDetail() {
               <div className="flex flex-col">
                 <span className="text-2xl">Description</span>
                 <div
+                  className="mb-3"
                   dangerouslySetInnerHTML={{
                     __html: DOMpurify.sanitize(
                       project.description || "Aucune description"
@@ -57,19 +58,30 @@ function ProjectDetail() {
             {project.status && (
               <div className="flex flex-col">
                 <span className="text-2xl">Statut</span>
-                <span className="text-lg font-medium text-gray-500 mb-4">
-                  {project.status}
-                </span>
+                {project.status === "active" ? (
+                  <span className="text-lg font-bold text-green-500 mb-3">
+                    {project.status}
+                  </span>
+                ) : (
+                  <span className="text-lg font-medium text-yellow-500 mb-3">
+                    {project.status}
+                  </span>
+                )}
               </div>
             )}
             {project.teams && project.teams.length > 0 && (
               <div className="flex flex-col">
                 <span className="text-2xl">Équipes</span>
-                <ul className="list-disc list-inside text-lg font-medium text-gray-500 mb-4">
+                <div className="mb-4 mt-3">
                   {project.teams.map((team) => (
-                    <li key={team.slug}>{team.name}</li>
+                    <span
+                      key={team.slug}
+                      className="bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2"
+                    >
+                      {team.name}
+                    </span>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>

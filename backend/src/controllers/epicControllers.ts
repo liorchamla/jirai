@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { epicsSchema, updateEpicSchema } from "../schemas/epicsSchema";
 import prisma from "../utils/prisma";
+import { findStatusByName, isValidId } from "../utils/validation";
 
 // ============================================================
 // ====================== GET ALL EPICS =======================
@@ -28,8 +29,8 @@ export async function getEpicById(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   try {
-    // If id is NaN (invalid), findUnique will return null
-    const epic = isNaN(id)
+    // If id is invalid, findUnique will return null
+    const epic = !isValidId(id)
       ? null
       : await prisma.epic.findUnique({
           where: { id },
@@ -116,9 +117,9 @@ export async function updateEpic(req: Request, res: Response) {
   }
 
   const DEFAULT_STATUS_NAME = result.data.statusId;
-  const foundStatus = await prisma.status.findFirst({
-    where: { name: DEFAULT_STATUS_NAME },
-  });
+  const foundStatus = DEFAULT_STATUS_NAME
+    ? await findStatusByName(DEFAULT_STATUS_NAME)
+    : null;
 
   const { title, description, priority, createdBy, assignedTo, projectSlug } =
     result.data;
