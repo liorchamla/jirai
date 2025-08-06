@@ -193,3 +193,14 @@
 - Développement du composant `StatusBadge` (`frontend/src/components/StatusBadge.tsx`) pour afficher visuellement les status avec des icônes PrimeReact colorées selon l'état.
 - Intégration des badges de status dans les interfaces de visualisation des epics et tickets du frontend.
 - Ajout des TICKET dans le `seed`.
+
+## 23. Implémentation du CRUD pour les commentaires
+
+- Ajout du modèle `Comment` dans le schéma Prisma (`backend/prisma/schema.prisma`) avec les champs requis (contenu, createdBy, epicId, ticketId, etc.).
+- Relations établies avec les modèles `User`, `Epic` et `Ticket` permettant d'associer les commentaires aux epics ou aux tickets.
+- Création des routes REST pour les commentaires dans `backend/src/routes/comment.router.ts` (GET, POST, PATCH, DELETE).
+- Développement des contrôleurs associés dans `backend/src/controllers/commentControllers.ts` pour gérer le CRUD complet.
+- Mise en place des schémas de validation avec Zod dans `backend/src/schemas/commentsSchema.ts`.
+- Rédaction de tests unitaires complets pour chaque endpoint de commentaire.
+- Intégration des commentaires dans le router principal (`backend/src/routes/index.router.ts`).
+- Ajout des commentaires dans le système de seed (`backend/commands/seed.ts`).
