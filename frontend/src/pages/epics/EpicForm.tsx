@@ -21,6 +21,9 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
   const [priority, setPriority] = useState<Epic["priority"]>(
     epic?.priority || "frozen"
   );
+  const [status, setStatus] = useState<Epic["status"]["name"]>(
+    epic?.status?.name || "thinking"
+  );
   const [error, setError] = useState<string | null>(null);
   const [errorTitle, setErrorTitle] = useState<string[]>([]);
   const [errorDescription, setErrorDescription] = useState<string[]>([]);
@@ -63,6 +66,7 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
           description,
           priority,
           projectSlug: project?.slug,
+          status,
         })
         .unauthorized(() => {
           navigate("/login");
@@ -91,6 +95,7 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
           title,
           description,
           priority,
+          status,
         })
         .unauthorized(() => {
           navigate("/login");
@@ -128,18 +133,6 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
     });
   }
 
-  const renderHeader = () => {
-    return (
-      <span className="ql-formats">
-        <button className="ql-bold" aria-label="Bold"></button>
-        <button className="ql-italic" aria-label="Italic"></button>
-        <button className="ql-underline" aria-label="Underline"></button>
-      </span>
-    );
-  };
-
-  const header = renderHeader();
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
       <label htmlFor="title">Titre de l&apos;EPIC</label>
@@ -162,7 +155,6 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
         placeholder="Description de l'EPIC"
         value={description}
         onTextChange={(e) => setDescription(e.htmlValue || "")}
-        headerTemplate={header}
       />
       {errorDescription.length > 0 && (
         <Message
@@ -171,6 +163,19 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
           className="w-full mb-5"
         />
       )}
+      <label htmlFor="status">Statut</label>
+      <Dropdown
+        id="status"
+        value={status}
+        options={[
+          { label: "Thinking", value: "thinking" },
+          { label: "Ready", value: "ready" },
+          { label: "In Progress", value: "in_progress" },
+          { label: "Done", value: "done" },
+          { label: "Canceled", value: "canceled" },
+        ]}
+        onChange={(e) => setStatus(e.value)}
+      />
       <label htmlFor="priority">Priorité</label>
       <Dropdown
         id="priority"

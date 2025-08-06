@@ -13,7 +13,7 @@ export const epicsSchema = z.object({
   createdBy: z.string().optional(),
   assignedTo: z.string().optional(),
   projectSlug: z.string({ message: "Project slug is required" }),
-  statusId: z
+  status: z
     .enum(["thinking", "ready", "in_progress", "done", "canceled"])
     .optional(),
 });

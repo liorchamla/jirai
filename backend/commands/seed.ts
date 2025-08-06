@@ -2,7 +2,8 @@ import prisma from "../src/utils/prisma";
 import argon2 from "argon2";
 import { fakerFR as faker } from "@faker-js/faker";
 
-// On supprime les données existantes
+// On supprime les données existantes (dans l'ordre des dépendances)
+await prisma.ticket.deleteMany();
 await prisma.epic.deleteMany();
 await prisma.status.deleteMany();
 await prisma.team.deleteMany();
@@ -173,6 +174,86 @@ for (const project of projects) {
         createdBy: user.uuid,
         assignedTo: assignedUser?.uuid,
         projectSlug: project.slug,
+        statusId: faker.helpers.arrayElement(statuses).id,
+      },
+    });
+  }
+}
+
+// On récupère tous les epics créés pour leur ajouter des tickets
+const allEpics = await prisma.epic.findMany();
+
+// On crée des TICKETS pour chaque epic (entre 0 et 5 tickets par epic)
+for (const epic of allEpics) {
+  const numberOfTickets = faker.number.int({ min: 0, max: 5 });
+
+  // Titres de tickets réalistes en français
+  const ticketTitles = [
+    "Corriger le bug de connexion",
+    "Ajouter la validation des champs",
+    "Implémenter le tri des données",
+    "Optimiser la requête SQL",
+    "Créer les tests unitaires",
+    "Mettre à jour la documentation",
+    "Refactoriser le code legacy",
+    "Ajouter la gestion d'erreurs",
+    "Implémenter le cache Redis",
+    "Créer l'interface utilisateur",
+    "Configurer les variables d'environnement",
+    "Ajouter les logs de sécurité",
+    "Optimiser les performances",
+    "Implémenter la pagination",
+    "Créer les migrations de base de données",
+    "Ajouter les validations côté serveur",
+    "Configurer le monitoring",
+    "Implémenter l'upload de fichiers",
+    "Créer les fixtures de test",
+    "Ajouter l'internationalisation",
+  ];
+
+  // Descriptions réalistes en français
+  const ticketDescriptions = [
+    "Résoudre le problème qui empêche les utilisateurs de se connecter dans certains cas.",
+    "Ajouter des validations robustes pour tous les champs de saisie utilisateur.",
+    "Permettre aux utilisateurs de trier les données selon différents critères.",
+    "Optimiser les performances de la base de données en révisant les requêtes.",
+    "Créer une suite de tests unitaires pour couvrir les fonctionnalités critiques.",
+    "Mettre à jour la documentation technique pour refléter les derniers changements.",
+    "Refactoriser l'ancien code pour améliorer la maintenabilité et les performances.",
+    "Implémenter une gestion d'erreurs centralisée et robuste.",
+    "Mettre en place un système de cache pour améliorer les temps de réponse.",
+    "Développer une interface utilisateur intuitive et responsive.",
+    "Configurer correctement toutes les variables d'environnement nécessaires.",
+    "Ajouter des logs détaillés pour le monitoring de sécurité.",
+    "Identifier et résoudre les goulots d'étranglement de performance.",
+    "Implémenter un système de pagination efficace pour les grandes listes.",
+    "Créer les scripts de migration pour la mise à jour de la base de données.",
+    "Ajouter des validations côté serveur pour sécuriser l'application.",
+    "Configurer les outils de monitoring et d'alertes.",
+    "Permettre aux utilisateurs d'uploader et de gérer leurs fichiers.",
+    "Créer des données de test réalistes pour faciliter le développement.",
+    "Ajouter le support multi-langues à l'application.",
+  ];
+
+  for (let i = 0; i < numberOfTickets; i++) {
+    const assignedUser = faker.helpers.maybe(
+      () => faker.helpers.arrayElement(allUsers),
+      { probability: 0.8 }
+    );
+
+    await prisma.ticket.create({
+      data: {
+        title: faker.helpers.arrayElement(ticketTitles),
+        description: faker.helpers.arrayElement(ticketDescriptions),
+        priority: faker.helpers.arrayElement([
+          "frozen",
+          "low",
+          "medium",
+          "high",
+        ]),
+        createdBy: user.uuid,
+        assignedTo: assignedUser?.uuid,
+        epicId: epic.id,
         statusId: faker.helpers.arrayElement(statuses).id,
       },
     });

@@ -13,6 +13,9 @@ export const ticketsSchema = z.object({
   createdBy: z.string().optional(),
   assignedTo: z.string().optional(),
   epicId: z.number({ message: "Epic ID is required" }),
+  status: z
+    .enum(["thinking", "ready", "in_progress", "done", "canceled"])
+    .optional(),
 });
 
 export const updateTicketSchema = ticketsSchema.partial();

@@ -8,6 +8,7 @@ import { Dialog } from "primereact/dialog";
 import EpicForm from "../epics/EpicForm";
 import DOMpurify from "dompurify";
 import PriorityBadge from "../../components/PriorityBadge";
+import StatusBadge from "../../components/StatusBadge";
 
 interface DetailProject {
   project?: Project;
@@ -141,6 +142,7 @@ function ProjectDetail() {
                       className="flex-1"
                     >
                       <div className="p-2">
+                        <StatusBadge name={epic.status.name} />
                         <span className="font-bold">EPIC : {epic.title}</span>
                       </div>
                     </NavLink>
