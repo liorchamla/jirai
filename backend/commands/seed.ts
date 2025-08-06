@@ -3,6 +3,7 @@ import argon2 from "argon2";
 import { fakerFR as faker } from "@faker-js/faker";
 
 // On supprime les données existantes (dans l'ordre des dépendances)
+await prisma.comment.deleteMany();
 await prisma.ticket.deleteMany();
 await prisma.epic.deleteMany();
 await prisma.status.deleteMany();
@@ -255,6 +256,99 @@ for (const epic of allEpics) {
         assignedTo: assignedUser?.uuid,
         epicId: epic.id,
         statusId: faker.helpers.arrayElement(statuses).id,
+      },
+    });
+  }
+}
+
+// On génère des commentaires pour les EPICs (entre 0 et 5 commentaires par epic)
+for (const epic of allEpics) {
+  const numberOfComments = faker.number.int({ min: 0, max: 5 });
+
+  // Contenus de commentaires réalistes en français
+  const commentContents = [
+    "Excellent travail sur cette fonctionnalité ! Les spécifications sont claires.",
+    "J'ai quelques questions sur l'implémentation. Pouvons-nous en discuter ?",
+    "Cette approche me semble solide, j'approuve la direction prise.",
+    "Il faudrait peut-être revoir les délais, cela me paraît ambitieux.",
+    "Super idée ! Cela va vraiment améliorer l'expérience utilisateur.",
+    "Je pense qu'on devrait ajouter des tests supplémentaires pour cette partie.",
+    "La documentation est très bien rédigée, merci pour le détail.",
+    "Attention aux performances sur cette fonctionnalité, il faut optimiser.",
+    "Parfait ! Cette solution répond exactement à notre besoin.",
+    "Je propose une approche alternative que nous pourrions explorer.",
+    "Les maquettes sont validées, on peut passer au développement.",
+    "Il y a une dépendance avec l'équipe backend à prendre en compte.",
+    "Excellent retour des utilisateurs sur cette fonctionnalité !",
+    "Je vais faire une review détaillée et revenir vers vous.",
+    "Cette implémentation respecte bien les bonnes pratiques.",
+    "Nous devons nous assurer de la compatibilité avec les navigateurs anciens.",
+    "Bonne initiative ! Cela va simplifier le workflow de l'équipe.",
+    "Les tests automatisés passent, nous sommes prêts pour la mise en production.",
+    "Il faudrait peut-être ajouter des logs pour faciliter le debugging.",
+    "Cette optimisation va considérablement améliorer les performances.",
+  ];
+
+  for (let i = 0; i < numberOfComments; i++) {
+    const commentAuthor = faker.helpers.arrayElement(allUsers);
+
+    await prisma.comment.create({
+      data: {
+        content: faker.helpers.arrayElement(commentContents),
+        createdBy: commentAuthor.uuid,
+        epicId: epic.id,
+        createdAt: faker.date.between({
+          from: epic.createdAt,
+          to: new Date(),
+        }),
+      },
+    });
+  }
+}
+
+// On récupère tous les tickets créés pour leur ajouter des commentaires
+const allTickets = await prisma.ticket.findMany();
+
+// On génère des commentaires pour les TICKETS (entre 0 et 5 commentaires par ticket)
+for (const ticket of allTickets) {
+  const numberOfComments = faker.number.int({ min: 0, max: 5 });
+
+  // Contenus de commentaires spécifiques aux tickets
+  const ticketCommentContents = [
+    "Bug reproductible, je m'en occupe immédiatement.",
+    "J'ai identifié la cause du problème, correction en cours.",
+    "Tests effectués, le ticket peut être fermé.",
+    "Il faut ajouter des validations supplémentaires côté frontend.",
+    "La correction est déployée, pouvez-vous vérifier ?",
+    "Ce ticket est lié à un autre, je vais les traiter ensemble.",
+    "Bonne description du problème, cela facilite la résolution.",
+    "J'ai besoin de plus d'informations pour reproduire le bug.",
+    "La solution proposée fonctionne parfaitement !",
+    "Attention, cette modification peut impacter d'autres fonctionnalités.",
+    "Les logs montrent exactement le problème, merci pour le détail.",
+    "Je propose de refactoriser cette partie pour éviter la récurrence.",
+    "Tests unitaires ajoutés pour couvrir ce cas d'usage.",
+    "La performance est maintenant optimale après les modifications.",
+    "Il faudrait documenter cette solution pour l'équipe.",
+    "Excellente analyse du problème, la solution est élégante.",
+    "Ce ticket peut être marqué comme résolu.",
+    "J'ai trouvé une solution plus simple et plus efficace.",
+    "Les tests de régression sont tous passés avec succès.",
+    "Cette amélioration va vraiment aider les utilisateurs finaux.",
+  ];
+
+  for (let i = 0; i < numberOfComments; i++) {
+    const commentAuthor = faker.helpers.arrayElement(allUsers);
+
+    await prisma.comment.create({
+      data: {
+        content: faker.helpers.arrayElement(ticketCommentContents),
+        createdBy: commentAuthor.uuid,
+        ticketId: ticket.id,
+        createdAt: faker.date.between({
+          from: ticket.createdAt,
+          to: new Date(),
+        }),
       },
     });
   }
