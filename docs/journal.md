@@ -181,3 +181,15 @@
 - Ajout de la route pour visualiser le détail d'un ticket (`/ticket/:id`) dans `App.tsx`.
 - Configuration des appels API pour les opérations CRUD tickets via `wretch` dans le frontend.
 - Mise en place de l'éditeur PrimeReact pour la description des tickets avec formatage riche (gras, italique, souligné).
+
+## 22. Implémentation des status dans les EPIC et TICKET
+
+- Création du schéma de validation Zod pour les status dans `backend/src/schemas/statusSchema.ts`.
+- Mise en place de la fonction utilitaire `findStatusByName` dans `backend/src/utils/validation.ts` pour récupérer un status par son nom.
+- Modification des contrôleurs `epicControllers.ts` et `ticketControllers.ts` pour :
+  - Assigner automatiquement le status par défaut "thinking" lors de la création d'un epic ou ticket
+  - Inclure les informations de status dans les réponses des API (GET)
+- Création du type TypeScript `Status` dans `frontend/src/types/Status.ts` pour typer les données côté frontend.
+- Développement du composant `StatusBadge` (`frontend/src/components/StatusBadge.tsx`) pour afficher visuellement les status avec des icônes PrimeReact colorées selon l'état.
+- Intégration des badges de status dans les interfaces de visualisation des epics et tickets du frontend.
+- Ajout des TICKET dans le `seed`.

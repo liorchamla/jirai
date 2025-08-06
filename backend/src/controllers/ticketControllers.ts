@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ticketsSchema, updateTicketSchema } from "../schemas/ticketsSchemas";
 import prisma from "../utils/prisma";
-import { isValidId } from "../utils/validation";
+import { findStatusByName, isValidId } from "../utils/validation";
 
 // ============================================================
 // ====================== GET ALL TICKETS =====================
@@ -10,7 +10,7 @@ import { isValidId } from "../utils/validation";
 export async function getAllTickets(req: Request, res: Response) {
   try {
     const tickets = await prisma.ticket.findMany({
-      include: { creator: true }, // Include user information if needed
+      include: { creator: true, status: true }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -34,7 +34,7 @@ export async function getTicketById(req: Request, res: Response) {
       ? null
       : await prisma.ticket.findUnique({
           where: { id },
-          include: { creator: true }, // Include user information if needed
+          include: { creator: true, status: true }, // Include user information if needed
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });
 
@@ -116,6 +116,13 @@ export async function updateTicket(req: Request, res: Response) {
   const { title, description, priority, assignedTo, epicId } = result.data;
 
   try {
+    const DEFAULT_STATUS_NAME = result.data.status;
+    const foundStatus = DEFAULT_STATUS_NAME
+      ? await findStatusByName(DEFAULT_STATUS_NAME)
+      : null;
+
+    const statusId = foundStatus?.id;
+
     const existingTicket = await prisma.ticket.findUnique({
       where: { id },
     });
@@ -132,6 +139,7 @@ export async function updateTicket(req: Request, res: Response) {
         priority,
         assignedTo,
         epicId,
+        statusId,
       },
     });
     res.status(200).json(ticket);

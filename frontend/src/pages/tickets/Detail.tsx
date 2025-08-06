@@ -7,6 +7,7 @@ import PriorityBadge from "../../components/PriorityBadge";
 import TicketForm from "../tickets/TicketForm";
 import type { Ticket } from "../../types/Ticket";
 import { useParams } from "react-router-dom";
+import StatusBadge from "../../components/StatusBadge";
 
 function TicketDetail() {
   const [ticket, setTicket] = useState<Ticket | null>(null);
@@ -30,7 +31,7 @@ function TicketDetail() {
           <>
             <Button
               className="w-fit"
-              icon="pi pi-plus"
+              icon="pi pi-pencil"
               label="Modifier TICKET"
               onClick={() => setDialog("update")}
               size="small"
@@ -57,6 +58,12 @@ function TicketDetail() {
                     {ticket.title}
                   </span>
                 </span>
+                <div className="mt-2">
+                  <StatusBadge name={ticket.status.name} />
+                  <span className="p-1 text-white rounded w-fit bg-gray-300">
+                    {ticket.status.name}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-2xl">Priorité</span>

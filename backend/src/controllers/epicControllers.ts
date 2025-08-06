@@ -10,7 +10,15 @@ import { findStatusByName, isValidId } from "../utils/validation";
 export async function getAllEpics(req: Request, res: Response) {
   try {
     const epics = await prisma.epic.findMany({
-      include: { creator: true }, // Include user information if needed
+      include: {
+        creator: true,
+        tickets: {
+          include: {
+            status: true, // Include status information for each ticket
+          },
+        },
+        status: true,
+      }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -36,7 +44,12 @@ export async function getEpicById(req: Request, res: Response) {
           where: { id },
           include: {
             creator: true, // Include user information if needed
-            tickets: true, // Include tickets associated with this epic
+            tickets: {
+              include: {
+                status: true, // Include status information for each ticket
+              },
+            }, // Include tickets associated with this epic
+            status: true, // Include status information
           },
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });
@@ -116,7 +129,7 @@ export async function updateEpic(req: Request, res: Response) {
     return;
   }
 
-  const DEFAULT_STATUS_NAME = result.data.statusId;
+  const DEFAULT_STATUS_NAME = result.data.status;
   const foundStatus = DEFAULT_STATUS_NAME
     ? await findStatusByName(DEFAULT_STATUS_NAME)
     : null;

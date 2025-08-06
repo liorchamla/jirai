@@ -9,6 +9,7 @@ import EpicForm from "./EpicForm";
 import PriorityBadge from "../../components/PriorityBadge";
 import TicketForm from "../tickets/TicketForm";
 import type { Ticket } from "../../types/Ticket";
+import StatusBadge from "../../components/StatusBadge";
 
 function EpicDetail() {
   const [epic, setEpic] = useState<Epic | null>(null);
@@ -37,7 +38,7 @@ function EpicDetail() {
           <>
             <Button
               className="w-fit"
-              icon="pi pi-plus"
+              icon="pi pi-pencil"
               label="Modifier EPIC"
               onClick={() => setDialog("update")}
               size="small"
@@ -62,6 +63,12 @@ function EpicDetail() {
                   EPIC :{" "}
                   <span className="text-gray-400 font-bold">{epic.title}</span>
                 </span>
+                <div className="mt-2">
+                  <StatusBadge name={epic.status.name} />
+                  <span className="p-1 text-white rounded w-fit bg-gray-300">
+                    {epic.status.name}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-2xl">Priorité</span>
@@ -101,6 +108,9 @@ function EpicDetail() {
                     <div className="flex flex-row items-center justify-between w-full">
                       <NavLink to={`/ticket/${ticket.id}`} className="flex-1">
                         <div className="p-2">
+                          {ticket.status && (
+                            <StatusBadge name={ticket.status.name} />
+                          )}
                           <span className="font-bold">
                             TICKET : {ticket.title}
                           </span>

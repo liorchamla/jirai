@@ -13,7 +13,11 @@ import slug from "slug";
 export async function getAllProjects(req: Request, res: Response) {
   try {
     const projects = await prisma.project.findMany({
-      include: { creator: true, teams: true, epics: true }, // Include user information if needed
+      include: {
+        creator: true,
+        teams: true,
+        epics: { include: { status: true } },
+      }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -33,7 +37,11 @@ export async function getProjectBySlug(req: Request, res: Response) {
   try {
     const project = await prisma.project.findUnique({
       where: { slug },
-      include: { creator: true, teams: true, epics: true }, // Include user information if needed
+      include: {
+        creator: true,
+        teams: true,
+        epics: { include: { status: true } },
+      }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
     });
     if (!project) {
