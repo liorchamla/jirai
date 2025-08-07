@@ -84,8 +84,7 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
-      <label htmlFor="commentaire">Description</label>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Editor
         id="commentaire"
         placeholder="Votre commentaire"
@@ -102,7 +101,9 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
       {error && (
         <Message severity="error" text={error} className="w-full mb-5" />
       )}
-      <Button type="submit" label="Créer commentaire" />
+      <div className="self-end">
+        <Button type="submit" label="Créer commentaire" />
+      </div>
     </form>
   );
 }

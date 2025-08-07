@@ -1,7 +1,7 @@
 import { NavLink, useParams } from "react-router-dom";
 import type { Epic } from "../../types/Epic";
 import { getApi } from "../../utils/api";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DOMpurify from "dompurify";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -10,8 +10,7 @@ import PriorityBadge from "../../components/PriorityBadge";
 import TicketForm from "../tickets/TicketForm";
 import type { Ticket } from "../../types/Ticket";
 import StatusBadge from "../../components/StatusBadge";
-import { Panel } from "primereact/panel";
-import CommentForm from "../comments/commentForm";
+import CommentForm from "../comments/CommentForm";
 
 function EpicDetail() {
   const [epic, setEpic] = useState<Epic | null>(null);
@@ -19,7 +18,6 @@ function EpicDetail() {
   const [ticketDialog, setTicketDialog] = useState<"add" | "update" | null>(
     null
   );
-  const [commentDialog, setCommentDialog] = useState<"add" | null>(null);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
   const params = useParams();
@@ -33,8 +31,6 @@ function EpicDetail() {
   useEffect(() => {
     fetchEpic();
   }, [fetchEpic]);
-
-  const ref = useRef<Panel | null>(null);
 
   return (
     <div className="flex justify-center items-center">
@@ -179,66 +175,41 @@ function EpicDetail() {
             />
           </Dialog>
         </div>
-        <span className="text-2xl mt-3">Commentaires</span>
-        <div className="flex justify-start">
-          <Button
-            className="w-auto"
-            icon="pi pi-plus"
-            label="Ajouter un commentaire à l'EPIC"
-            onClick={() => setCommentDialog("add")}
-            size="small"
-          />
-          <Dialog
-            header="Ajouter un commentaire"
-            visible={commentDialog === "add"}
-            style={{ width: "60vw" }}
-            onHide={() => setCommentDialog(null)}
-          >
-            {epic && (
-              <CommentForm
-                epic={epic}
-                onSubmit={() => {
-                  setCommentDialog(null);
-                  fetchEpic(); // Rafraîchir les données de l'EPIC pour afficher le nouveau commentaire
-                }}
-              />
-            )}
-          </Dialog>
-        </div>
+
         {epic?.comments && epic.comments.length > 0 && (
-          <div className="card flex md:justify-content-center">
-            <ul className="m-0 border border-gray-300 p-3 w-full">
-              {epic.comments.map((comment) => (
-                <Panel
-                  key={comment.id}
-                  ref={ref}
-                  className="mb-2"
-                  header={comment.creator.username}
-                  footer={
-                    <div className="flex justify-end">
-                      <span className="text-sm text-gray-500 px-2 py-1">
-                        {new Date(comment.createdAt).toLocaleString("fr-FR", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  }
-                  toggleable
-                >
-                  <div
-                    className="m-0"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMpurify.sanitize(comment.content),
-                    }}
-                  ></div>
-                </Panel>
-              ))}
-            </ul>
+          <div className="flex flex-col gap-5">
+            {epic.comments.map((comment) => (
+              <article key={comment.id}>
+                <header className="font-bold">
+                  {comment.creator.username},{" "}
+                  <span className="text-sm text-gray-500">
+                    {new Date(comment.createdAt).toLocaleString("fr-FR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </header>
+
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMpurify.sanitize(comment.content),
+                  }}
+                />
+              </article>
+            ))}
           </div>
+        )}
+
+        {epic && (
+          <CommentForm
+            epic={epic}
+            onSubmit={() => {
+              fetchEpic(); // Rafraîchir les données de l'EPIC pour afficher le nouveau commentaire
+            }}
+          />
         )}
       </div>
     </div>
