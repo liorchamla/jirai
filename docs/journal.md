@@ -204,3 +204,11 @@
 - Rédaction de tests unitaires complets pour chaque endpoint de commentaire.
 - Intégration des commentaires dans le router principal (`backend/src/routes/index.router.ts`).
 - Ajout des commentaires dans le système de seed (`backend/commands/seed.ts`).
+
+## 24. Implémentation des commentaires sur les EPIC et TICKET sur le frontend
+
+- Création du type TypeScript `Comment` dans `frontend/src/types/Comment.ts` pour typer les données des commentaires côté frontend avec les propriétés (id, content, createdBy, createdAt, updatedAt, creator).
+- Développement du composant `CommentForm` (`frontend/src/pages/comments/commentForm.tsx`) pour la création de commentaires avec validation côté client.
+- Intégration des commentaires dans la page de détail d'epic (`frontend/src/pages/epics/Detail.tsx`).
+- Intégration des commentaires dans la page de détail de ticket (`frontend/src/pages/tickets/Detail.tsx`).
+- Configuration des appels API pour la création de commentaires via `wretch` dans le frontend avec gestion des erreurs d'authentification et de validation.

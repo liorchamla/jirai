@@ -1,0 +1,110 @@
+import { Button } from "primereact/button";
+import { Editor } from "primereact/editor";
+import { Message } from "primereact/message";
+import type { Epic } from "../../types/Epic";
+import { getApi } from "../../utils/api";
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import type { WretchError } from "wretch";
+import type { Ticket } from "../../types/Ticket";
+
+interface PropsType {
+  epic?: Epic;
+  ticket?: Ticket;
+  onSubmit: () => void;
+}
+
+function CommentForm({ epic, ticket, onSubmit }: PropsType) {
+  const [content, setContent] = useState<string>("");
+  const [errorContent, setErrorContent] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  // Réinitialiser le contenu quand l'epic change
+  useEffect(() => {
+    setContent("");
+    setErrorContent([]);
+    setError(null);
+  }, [epic]);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    try {
+      createNewComment();
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+      setError(
+        "Une erreur s'est produite lors de la création ou la modification du commentaire."
+      );
+    }
+  };
+
+  const createNewComment = async () => {
+    try {
+      await getApi()
+        .url("/comments")
+        .post({
+          content,
+          epicId: epic?.id,
+          ticketId: ticket?.id,
+        })
+        .unauthorized(() => {
+          navigate("/login");
+        })
+        .error(422, (err) => {
+          handleApiError(err);
+        })
+        .json()
+        .then((result) => {
+          if (result) {
+            // Réinitialiser le contenu après succès
+            onSubmit();
+          }
+        });
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+      setError(
+        "Une erreur s'est produite lors de la création ou la modification du commentaire."
+      );
+    }
+  };
+
+  const handleApiError = (err: WretchError) => {
+    err.json.issues.forEach((error: { path: string[] }) => {
+      if (error.path[0] === "content") {
+        setErrorContent((errorContent) => [
+          ...errorContent,
+          "Le contenu doit contenir au moins 2 caractères.",
+        ]);
+      }
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
+      <label htmlFor="commentaire">Description</label>
+      <Editor
+        id="commentaire"
+        placeholder="Votre commentaire"
+        value={content}
+        onTextChange={(e) => setContent(e.htmlValue || "")}
+      />
+      {errorContent.length > 0 && (
+        <Message
+          severity="error"
+          text={errorContent.join(", ")}
+          className="w-full mb-5"
+        />
+      )}
+      {error && (
+        <Message severity="error" text={error} className="w-full mb-5" />
+      )}
+      <Button type="submit" label="Créer commentaire" />
+    </form>
+  );
+}
+
+export default CommentForm;
