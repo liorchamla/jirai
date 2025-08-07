@@ -15,9 +15,15 @@ export async function getAllEpics(req: Request, res: Response) {
         tickets: {
           include: {
             status: true, // Include status information for each ticket
+            comments: true, // Include comments for each ticket
           },
         },
         status: true,
+        comments: {
+          include: {
+            creator: true,
+          },
+        },
       }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
@@ -47,9 +53,15 @@ export async function getEpicById(req: Request, res: Response) {
             tickets: {
               include: {
                 status: true, // Include status information for each ticket
+                comments: true, // Include comments for each ticket
               },
             }, // Include tickets associated with this epic
             status: true, // Include status information
+            comments: {
+              include: {
+                creator: true,
+              },
+            }, // Include comments related to the epic
           },
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });

@@ -16,7 +16,12 @@ export async function getAllProjects(req: Request, res: Response) {
       include: {
         creator: true,
         teams: true,
-        epics: { include: { status: true } },
+        epics: {
+          include: {
+            status: true,
+            comments: true,
+          },
+        },
       }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
@@ -40,7 +45,12 @@ export async function getProjectBySlug(req: Request, res: Response) {
       include: {
         creator: true,
         teams: true,
-        epics: { include: { status: true } },
+        epics: {
+          include: {
+            status: true,
+            comments: true,
+          },
+        },
       }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
     });

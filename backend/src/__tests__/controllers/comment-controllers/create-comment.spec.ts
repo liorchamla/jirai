@@ -107,7 +107,7 @@ describe("createComment", () => {
 
     await createComment(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
       error: "Invalid comment data",
       issues: expect.any(Array),

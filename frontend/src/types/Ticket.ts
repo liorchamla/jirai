@@ -1,3 +1,4 @@
+import type { Comment } from "./Comment";
 import type { Status } from "./Status";
 
 export interface Ticket {
@@ -6,4 +7,5 @@ export interface Ticket {
   description: string;
   priority: "high" | "medium" | "low" | "frozen";
   status: Status;
+  comments: Comment[];
 }

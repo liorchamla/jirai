@@ -144,6 +144,14 @@ function ProjectDetail() {
                       <div className="p-2">
                         <StatusBadge name={epic.status.name} />
                         <span className="font-bold">EPIC : {epic.title}</span>
+                        {epic.comments && epic.comments.length > 0 && (
+                          <>
+                            <span className="pi pi-comment text-gray-500 ml-3"></span>
+                            <span className="ml-0.5 text-sm font-medium text-gray-600 -mt-1">
+                              {epic.comments?.length}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </NavLink>
                     <div className="flex items-center gap-2">

@@ -44,7 +44,8 @@ export async function getCommentById(req: Request, res: Response) {
     });
 
     if (!comment) {
-      return res.status(404).json({ error: "Comment not found" });
+      res.status(404).json({ error: "Comment not found" });
+      return;
     }
 
     res.status(200).json(comment);
@@ -62,13 +63,15 @@ export async function createComment(req: Request, res: Response) {
   const result = commentsSchema.safeParse(req.body);
 
   if (!result.success) {
-    return res
-      .status(400)
+    res
+      .status(422)
       .json({ error: "Invalid comment data", issues: result.error.issues });
+    return;
   }
 
   if (!req.user) {
-    return res.status(401).json({ error: "User not authenticated" });
+    res.status(401).json({ error: "User not authenticated" });
+    return;
   }
 
   const { content, epicId, ticketId } = result.data;
@@ -97,13 +100,15 @@ export async function updateComment(req: Request, res: Response) {
   const id = Number(req.params.id);
   const result = updateCommentsSchema.safeParse(req.body);
   if (!result.success) {
-    return res
-      .status(400)
+    res
+      .status(422)
       .json({ error: "Invalid comment data", issues: result.error.issues });
+    return;
   }
 
   if (!req.user) {
-    return res.status(401).json({ error: "User not authenticated" });
+    res.status(401).json({ error: "User not authenticated" });
+    return;
   }
 
   const { content } = result.data;
@@ -114,7 +119,8 @@ export async function updateComment(req: Request, res: Response) {
     });
 
     if (!existingComment) {
-      return res.status(404).json({ error: "Comment not found" });
+      res.status(404).json({ error: "Comment not found" });
+      return;
     }
 
     const updatedComment = await prisma.comment.update({
@@ -136,7 +142,8 @@ export async function deleteComment(req: Request, res: Response) {
   const id = Number(req.params.id);
 
   if (!req.user) {
-    return res.status(401).json({ error: "User not authenticated" });
+    res.status(401).json({ error: "User not authenticated" });
+    return;
   }
 
   try {
@@ -145,12 +152,14 @@ export async function deleteComment(req: Request, res: Response) {
     });
 
     if (!comment) {
-      return res.status(404).json({ error: "Comment not found" });
+      res.status(404).json({ error: "Comment not found" });
+      return;
     }
 
     // Check if the user is the creator of the comment
     if (comment.createdBy !== req.user.uuid) {
-      return res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: "Forbidden" });
+      return;
     }
 
     await prisma.comment.delete({

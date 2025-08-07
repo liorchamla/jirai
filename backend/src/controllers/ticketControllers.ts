@@ -10,7 +10,11 @@ import { findStatusByName, isValidId } from "../utils/validation";
 export async function getAllTickets(req: Request, res: Response) {
   try {
     const tickets = await prisma.ticket.findMany({
-      include: { creator: true, status: true }, // Include user information if needed
+      include: {
+        creator: true,
+        status: true,
+        comments: { include: { creator: true } },
+      }, // Include user information if needed
       omit: { createdBy: true }, // Omit createdBy if not needed in response
       orderBy: [{ updatedAt: "desc" }],
     });
@@ -34,7 +38,11 @@ export async function getTicketById(req: Request, res: Response) {
       ? null
       : await prisma.ticket.findUnique({
           where: { id },
-          include: { creator: true, status: true }, // Include user information if needed
+          include: {
+            creator: true,
+            status: true,
+            comments: { include: { creator: true } },
+          }, // Include user information if needed
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });
 
