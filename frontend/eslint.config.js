@@ -3,12 +3,14 @@ import react from "eslint-plugin-react";
 import prettier from "eslint-plugin-prettier";
 import tsParser from "@typescript-eslint/parser";
 import tseslint from "@typescript-eslint/eslint-plugin";
+import { globalIgnores } from "eslint/config";
 
 /**
  * ESLint Flat Config pour Vite + React + TypeScript + Prettier
  */
 export default [
   js.configs.recommended,
+  globalIgnores(["**/dist/**"]),
   {
     files: ["**/*.{ts,tsx,js,jsx}", "**/*.cjs", "**/*.mjs"],
     languageOptions: {
