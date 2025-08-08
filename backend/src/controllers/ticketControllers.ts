@@ -41,7 +41,10 @@ export async function getTicketById(req: Request, res: Response) {
           include: {
             creator: true,
             status: true,
-            comments: { include: { creator: true } },
+            comments: {
+              include: { creator: true },
+              orderBy: [{ createdAt: "asc" }],
+            },
           }, // Include user information if needed
           omit: { createdBy: true }, // Omit createdBy if not needed in response
         });
