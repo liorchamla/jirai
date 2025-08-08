@@ -123,6 +123,11 @@ export async function updateComment(req: Request, res: Response) {
       return;
     }
 
+    if (existingComment.createdBy !== req.user.uuid) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+
     const updatedComment = await prisma.comment.update({
       where: { id },
       data: { content },
