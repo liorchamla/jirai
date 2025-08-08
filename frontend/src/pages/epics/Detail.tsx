@@ -26,7 +26,8 @@ function EpicDetail() {
   const [commentDialog, setCommentDialog] = useState<
     "update" | "delete" | null
   >(null);
-  const [commentFormKey, setCommentFormKey] = useState(0);
+  const [commentsSummary, setCommentsSummary] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState<boolean>(false);
 
   const { userInfo } = useContext(AuthContext);
 
@@ -60,6 +61,25 @@ function EpicDetail() {
         severity: "error",
         summary: "Error",
         detail: "Une erreur s'est produite lors de la suppression du projet",
+      });
+    }
+  };
+
+  const fetchCommentsSummary = async () => {
+    try {
+      setLoadingSummary(true);
+      const response: { summary: string } = await getApi()
+        .get(`/epic/${id}/summary`)
+        .json();
+      setCommentsSummary(response.summary.split("\n").join("<br />"));
+      setLoadingSummary(false);
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error("Error fetching comments summary:", error);
+      toast.current?.show({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Impossible de récupérer le résumé des commentaires.",
       });
     }
   };
@@ -207,7 +227,21 @@ function EpicDetail() {
             />
           </Dialog>
         </div>
-
+        {!commentsSummary && (
+          <Button
+            className="w-fit mt-4"
+            icon="pi pi-sparkles"
+            label="Résumé de la conversation"
+            loading={loadingSummary}
+            onClick={() => fetchCommentsSummary()}
+          />
+        )}
+        {commentsSummary && (
+          <div className="mt-4 p-2 border border-gray-300 rounded">
+            <h3 className="font-bold">Résumé de la conversation :</h3>
+            <p dangerouslySetInnerHTML={{ __html: commentsSummary }} />
+          </div>
+        )}
         {epic?.comments && epic.comments.length > 0 && (
           <div className="flex flex-col gap-5">
             {epic.comments.map((comment) => (
@@ -273,10 +307,8 @@ function EpicDetail() {
 
         {epic && (
           <CommentForm
-            key={commentFormKey}
             epic={epic}
             onSubmit={() => {
-              setCommentFormKey((prev) => prev + 1); // Incrémenter la clé pour vider le formulaire
               fetchEpic(); // Rafraîchir les données de l'EPIC pour afficher le nouveau commentaire
             }}
           />
