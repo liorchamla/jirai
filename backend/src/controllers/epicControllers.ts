@@ -61,6 +61,7 @@ export async function getEpicById(req: Request, res: Response) {
               include: {
                 creator: true,
               },
+              orderBy: [{ createdAt: "asc" }], // Order comments by creation date
             }, // Include comments related to the epic
           },
           omit: { createdBy: true }, // Omit createdBy if not needed in response
