@@ -1,7 +1,7 @@
 import { NavLink, useParams } from "react-router-dom";
 import type { Epic } from "../../types/Epic";
 import { getApi } from "../../utils/api";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import DOMpurify from "dompurify";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -11,14 +11,26 @@ import TicketForm from "../tickets/TicketForm";
 import type { Ticket } from "../../types/Ticket";
 import StatusBadge from "../../components/StatusBadge";
 import CommentForm from "../comments/CommentForm";
+import { AuthContext } from "../../utils/auth";
+import type { Comment } from "../../types/Comment";
+import { Toast } from "primereact/toast";
 
 function EpicDetail() {
   const [epic, setEpic] = useState<Epic | null>(null);
-  const [dialog, setDialog] = useState<"update" | null>(null);
+  const [dialog, setDialog] = useState<"update" | "deleteComment" | null>(null);
   const [ticketDialog, setTicketDialog] = useState<"add" | "update" | null>(
     null
   );
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
+  const [commentDialog, setCommentDialog] = useState<
+    "update" | "delete" | null
+  >(null);
+  const [commentFormKey, setCommentFormKey] = useState(0);
+
+  const { userInfo } = useContext(AuthContext);
+
+  const toast = useRef<Toast>(null);
 
   const params = useParams();
   const { id } = params;
@@ -31,6 +43,26 @@ function EpicDetail() {
   useEffect(() => {
     fetchEpic();
   }, [fetchEpic]);
+
+  const handleConfirmDelete = async (comment: Comment) => {
+    try {
+      await getApi().delete(`/comments/${comment.id}`).res();
+      setDialog(null);
+      fetchEpic(); // Rafraîchir la liste
+      toast.current?.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Commentaire supprimé avec succès",
+        life: 3000,
+      });
+    } catch {
+      toast.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Une erreur s'est produite lors de la suppression du projet",
+      });
+    }
+  };
 
   return (
     <div className="flex justify-center items-center">
@@ -180,24 +212,60 @@ function EpicDetail() {
           <div className="flex flex-col gap-5">
             {epic.comments.map((comment) => (
               <article key={comment.id}>
-                <header className="font-bold">
-                  {comment.creator.username},{" "}
-                  <span className="text-sm text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString("fr-FR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                <header className="font-bold flex items-center">
+                  <span className="align-top">
+                    {comment.creator.username},{" "}
+                    <span className="text-sm text-gray-500 mr-1">
+                      {new Date(comment.createdAt).toLocaleString("fr-FR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
                   </span>
+                  {comment.creator.uuid === userInfo?.uuid && (
+                    <>
+                      <Button
+                        icon="pi pi-pencil"
+                        className="ml-2 p-button-text p-0 h-auto"
+                        severity="success"
+                        size="small"
+                        onClick={() => {
+                          setSelectedComment(comment);
+                          setCommentDialog("update");
+                        }}
+                      />
+                      <Button
+                        icon="pi pi-trash"
+                        className="ml-1 p-button-text p-0 h-auto"
+                        severity="danger"
+                        size="small"
+                        onClick={() => {
+                          setSelectedComment(comment);
+                          setDialog("deleteComment");
+                        }}
+                      />
+                    </>
+                  )}
                 </header>
-
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: DOMpurify.sanitize(comment.content),
-                  }}
-                />
+                {commentDialog === "update" &&
+                selectedComment?.id === comment.id ? (
+                  <CommentForm
+                    comment={selectedComment}
+                    onSubmit={() => {
+                      setCommentDialog(null);
+                      fetchEpic(); // Rafraîchir les données de l'EPIC pour afficher le commentaire
+                    }}
+                  />
+                ) : (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: DOMpurify.sanitize(comment.content),
+                    }}
+                  />
+                )}
               </article>
             ))}
           </div>
@@ -205,13 +273,46 @@ function EpicDetail() {
 
         {epic && (
           <CommentForm
+            key={commentFormKey}
             epic={epic}
             onSubmit={() => {
+              setCommentFormKey((prev) => prev + 1); // Incrémenter la clé pour vider le formulaire
               fetchEpic(); // Rafraîchir les données de l'EPIC pour afficher le nouveau commentaire
             }}
           />
         )}
       </div>
+      <Dialog
+        header="Supprimer commentaire"
+        visible={dialog === "deleteComment"}
+        style={{ width: "30vw" }}
+        onHide={() => {
+          setDialog(null);
+        }}
+      >
+        <div className="flex flex-col items-center">
+          <h2 className="text-lg font-semibold mb-4">
+            Êtes-vous sûr de vouloir supprimer ce commentaire?
+          </h2>
+          <div className="flex gap-2">
+            <Button
+              label="Confirmer"
+              severity="danger"
+              onClick={() => {
+                if (selectedComment) {
+                  handleConfirmDelete(selectedComment);
+                }
+              }}
+            />
+            <Button
+              label="Annuler"
+              className="mt-2"
+              onClick={() => setDialog(null)}
+            />
+          </div>
+        </div>
+      </Dialog>
+      <Toast ref={toast} position="top-right" />
     </div>
   );
 }

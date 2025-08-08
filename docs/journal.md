@@ -212,3 +212,12 @@
 - Intégration des commentaires dans la page de détail d'epic (`frontend/src/pages/epics/Detail.tsx`).
 - Intégration des commentaires dans la page de détail de ticket (`frontend/src/pages/tickets/Detail.tsx`).
 - Configuration des appels API pour la création de commentaires via `wretch` dans le frontend avec gestion des erreurs d'authentification et de validation.
+
+## 25. Implémentation de la modification et suppression des commentaires sur le frontend
+
+- Ajout de la fonctionnalité de modification des commentaires dans le composant `CommentForm` (`frontend/src/pages/comments/CommentForm.tsx`) avec une logique conditionnelle pour différencier création et modification.
+- Intégration des boutons d'édition et de suppression dans les pages de détail d'epic (`frontend/src/pages/epics/Detail.tsx`) et de ticket (`frontend/src/pages/tickets/Detail.tsx`) avec contrôle d'accès (seul le créateur du commentaire peut le modifier/supprimer).
+- Mise en place de l'édition inline des commentaires : clic sur le bouton "crayon" transforme l'affichage du commentaire en formulaire d'édition avec l'éditeur PrimeReact.
+- Implémentation de la fonctionnalité de suppression avec confirmation via une boîte de dialogue modale (`Dialog` de PrimeReact) pour éviter les suppressions accidentelles.
+- Développement de la méthode `handleConfirmDelete` dans les pages de détail epic et ticket utilisant l'endpoint DELETE `/comments/:id` pour supprimer définitivement un commentaire.
+- Respect des autorisations : seuls les commentaires créés par l'utilisateur connecté affichent les boutons de modification et suppression.

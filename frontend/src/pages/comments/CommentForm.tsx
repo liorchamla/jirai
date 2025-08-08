@@ -7,15 +7,17 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import type { WretchError } from "wretch";
 import type { Ticket } from "../../types/Ticket";
+import type { Comment } from "../../types/Comment";
 
 interface PropsType {
   epic?: Epic;
   ticket?: Ticket;
+  comment?: Comment;
   onSubmit: () => void;
 }
 
-function CommentForm({ epic, ticket, onSubmit }: PropsType) {
-  const [content, setContent] = useState<string>("");
+function CommentForm({ epic, ticket, comment, onSubmit }: PropsType) {
+  const [content, setContent] = useState<string>(comment?.content || "");
   const [errorContent, setErrorContent] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +25,7 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
 
   // Réinitialiser le contenu quand l'epic change
   useEffect(() => {
-    setContent("");
+    setContent(comment?.content || "");
     setErrorContent([]);
     setError(null);
   }, [epic]);
@@ -31,7 +33,13 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      createNewComment();
+      if (comment) {
+        await updateComment();
+      } else {
+        await createNewComment();
+      }
+      onSubmit();
+      setContent(""); // Réinitialiser le contenu après soumission
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
@@ -49,6 +57,35 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
           content,
           epicId: epic?.id,
           ticketId: ticket?.id,
+        })
+        .unauthorized(() => {
+          navigate("/login");
+        })
+        .error(422, (err) => {
+          handleApiError(err);
+        })
+        .json()
+        .then((result) => {
+          if (result) {
+            // Réinitialiser le contenu après succès
+            onSubmit();
+          }
+        });
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+      setError(
+        "Une erreur s'est produite lors de la création ou la modification du commentaire."
+      );
+    }
+  };
+
+  const updateComment = async () => {
+    try {
+      await getApi()
+        .url(`/comments/${comment?.id}`)
+        .patch({
+          content,
         })
         .unauthorized(() => {
           navigate("/login");
@@ -102,7 +139,10 @@ function CommentForm({ epic, ticket, onSubmit }: PropsType) {
         <Message severity="error" text={error} className="w-full mb-5" />
       )}
       <div className="self-end">
-        <Button type="submit" label="Créer commentaire" />
+        <Button
+          type="submit"
+          label={comment ? "Modifier commentaire" : "Créer commentaire"}
+        />
       </div>
     </form>
   );
