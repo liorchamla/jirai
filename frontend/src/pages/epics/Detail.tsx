@@ -131,7 +131,7 @@ function EpicDetail() {
             <div className="flex flex-col">
               <span className="text-2xl">Description</span>
               <div
-                className="mt-2 mb-7"
+                className="mt-2 mb-7 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-disc [&_ol]:ml-6 [&_li]:mb-1"
                 dangerouslySetInnerHTML={{
                   __html: DOMpurify.sanitize(epic.description),
                 }}
@@ -219,6 +219,7 @@ function EpicDetail() {
             onHide={() => setTicketDialog(null)}
           >
             <TicketForm
+              epic={epic}
               ticket={selectedTicket}
               onSubmit={() => {
                 setTicketDialog(null);
