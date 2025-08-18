@@ -9,3 +9,18 @@ router.get(
   authenticateToken,
   openaiController.getSummaryCommentEpic
 );
+router.get(
+  "/ticket/:id/summary",
+  authenticateToken,
+  openaiController.getSummaryCommentTicket
+);
+router.post(
+  "/automation/:projectSlug/epic",
+  authenticateToken,
+  openaiController.getDescriptionNewEpic
+);
+router.post(
+  "/automation/:epicId/ticket",
+  authenticateToken,
+  openaiController.getDescriptionNewTicket
+);

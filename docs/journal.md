@@ -221,3 +221,25 @@
 - Implémentation de la fonctionnalité de suppression avec confirmation via une boîte de dialogue modale (`Dialog` de PrimeReact) pour éviter les suppressions accidentelles.
 - Développement de la méthode `handleConfirmDelete` dans les pages de détail epic et ticket utilisant l'endpoint DELETE `/comments/:id` pour supprimer définitivement un commentaire.
 - Respect des autorisations : seuls les commentaires créés par l'utilisateur connecté affichent les boutons de modification et suppression.
+
+## 26. Intégration des fonctionnalités IA
+
+- Configuration de l'intégration OpenAI dans le backend avec création du fichier utilitaire `backend/src/utils/openai.ts` pour initialiser le client OpenAI avec la clé API.
+- Création du schéma de validation `backend/src/schemas/openaiSchema.ts` avec Zod pour valider les données d'entrée (titre obligatoire avec minimum 2 caractères).
+- Développement des contrôleurs OpenAI dans `backend/src/controllers/openaiControllers.ts` avec 4 fonctionnalités principales :
+  - `getSummaryCommentEpic` : génère un résumé automatique des commentaires d'un epic en utilisant GPT-3.5-turbo
+  - `getSummaryCommentTicket` : génère un résumé automatique des commentaires d'un ticket en utilisant GPT-3.5-turbo
+  - `getDescriptionNewEpic` : génère automatiquement une description détaillée pour un epic à partir de son titre et du contexte du projet
+  - `getDescriptionNewTicket` : génère automatiquement une description détaillée pour un ticket à partir de son titre et du contexte de l'epic/projet
+- Mise en place des routes API dans `backend/src/routes/openai.router.ts` :
+  - `GET /epic/:id/summary` pour le résumé des commentaires d'epic
+  - `GET /ticket/:id/summary` pour le résumé des commentaires de ticket
+  - `POST /automation/:projectSlug/epic` pour la génération de description d'epic
+  - `POST /automation/:epicId/ticket` pour la génération de description de ticket
+- Gestion robuste des erreurs avec traitement spécial des erreurs de quota OpenAI (status 429) qui retournent des messages d'erreur utilisateur-friendly au lieu d'échouer.
+- Intégration côté frontend dans `EpicForm.tsx` avec bouton "Générer automatiquement" qui appelle l'API d'automation pour pré-remplir le champ description d'un epic.
+- Intégration côté frontend dans `TicketForm.tsx` avec bouton "Générer automatiquement" qui appelle l'API d'automation pour pré-remplir le champ description d'un ticket.
+- Ajout de boutons "Résumer les commentaires (IA)" dans les pages de détail d'epic (`Detail.tsx`) et ticket (`Detail.tsx`) qui affichent un résumé généré par l'IA des discussions.
+- Mise en place d'états de chargement (`loadingSummary`, `loadingDescription`) avec indicateurs visuels pour améliorer l'expérience utilisateur pendant les appels à l'API OpenAI.
+- Respect des bonnes pratiques de sécurité : toutes les interactions avec OpenAI passent exclusivement par le backend, les clés API ne sont jamais exposées côté frontend.
+- Prompts optimisés pour générer des descriptions au format HTML avec formatage riche (gras, listes, couleurs) directement intégrables dans l'éditeur PrimeReact.

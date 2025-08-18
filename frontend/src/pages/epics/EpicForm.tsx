@@ -2,13 +2,14 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import type { Epic } from "../../types/Epic";
-import { useState, type FormEvent, useEffect } from "react";
+import { useState, type FormEvent, useEffect, useRef } from "react";
 import { getApi } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import type { WretchError } from "wretch";
 import type { Project } from "../../types/Project";
 import { Message } from "primereact/message";
 import { Editor } from "primereact/editor";
+import type { Toast } from "primereact/toast";
 
 interface PropsType {
   project?: Project;
@@ -27,8 +28,11 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
   const [error, setError] = useState<string | null>(null);
   const [errorTitle, setErrorTitle] = useState<string[]>([]);
   const [errorDescription, setErrorDescription] = useState<string[]>([]);
+  const [loadingDescription, setLoadingDescription] = useState(false);
 
   const navigate = useNavigate();
+
+  const toast = useRef<Toast>(null);
 
   // Réinitialiser les champs quand l'epic change
   useEffect(() => {
@@ -117,21 +121,58 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
   };
 
   function handleApiError(err: WretchError) {
-    err.json.error.issues.forEach((error: { path: string[] }) => {
-      if (error.path[0] === "title") {
-        setErrorTitle((errorTitle) => [
-          ...errorTitle,
-          "Le titre doit contenir au moins 2 caractères.",
-        ]);
-      }
-      if (error.path[0] === "description") {
-        setErrorDescription((errorDescription) => [
-          ...errorDescription,
-          "La description doit contenir au moins 2 caractères.",
-        ]);
-      }
-    });
+    // Réinitialiser les erreurs avant d'ajouter les nouvelles
+    setErrorTitle([]);
+    setErrorDescription([]);
+
+    // Déterminer quelle structure d'erreur utiliser
+    const issues = err.json.error?.issues || err.json.issues;
+
+    if (issues) {
+      issues.forEach((error: { path: string[] }) => {
+        if (error.path[0] === "title") {
+          setErrorTitle((errorTitle) => [
+            ...errorTitle,
+            "Le titre doit contenir au moins 2 caractères.",
+          ]);
+        }
+        if (error.path[0] === "description") {
+          setErrorDescription((errorDescription) => [
+            ...errorDescription,
+            "La description doit contenir au moins 2 caractères.",
+          ]);
+        }
+      });
+    }
   }
+
+  const fetchEpicDescription = async () => {
+    try {
+      setLoadingDescription(true);
+      const response: { description: string } = await getApi()
+        .url(`/automation/${project?.slug || epic?.projectSlug}/epic/`)
+        .post({ title })
+        .error(422, (err) => {
+          handleApiError(err);
+          setLoadingDescription(false);
+        })
+        .json();
+      if (errorDescription.length > 0) {
+        setLoadingDescription(false);
+        return;
+      }
+      setDescription(response.description);
+      setLoadingDescription(false);
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error("Error fetching epic description:", error);
+      toast.current?.show({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Impossible de récupérer la description de l'EPIC.",
+      });
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
@@ -150,6 +191,16 @@ function EpicForm({ project, epic, onSubmit }: PropsType) {
         />
       )}
       <label htmlFor="description">Description</label>
+      <Button
+        className="w-fit mt-4"
+        icon="pi pi-sparkles"
+        label="Générer une description"
+        loading={loadingDescription}
+        onClick={() => {
+          fetchEpicDescription();
+          setErrorTitle([]);
+        }}
+      />
       <Editor
         id="description"
         placeholder="Description de l'EPIC"

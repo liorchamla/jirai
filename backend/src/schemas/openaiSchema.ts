@@ -1,8 +1,7 @@
 import z from "zod";
 
 export const openaiSchema = z.object({
-  projectTitle: z.string(),
-  projectDescription: z.string(),
-  epicTitle: z.string(),
-  epicDescription: z.string(),
+  title: z
+    .string({ message: "Title is required" })
+    .min(2, { message: "Title must be at least 2 characters long" }),
 });

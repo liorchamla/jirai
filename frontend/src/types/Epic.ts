@@ -7,6 +7,7 @@ export interface Epic {
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | "frozen";
+  projectSlug: string;
   status: Status;
   tickets: Ticket[];
   comments: Comment[];

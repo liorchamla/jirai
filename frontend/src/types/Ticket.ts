@@ -6,6 +6,7 @@ export interface Ticket {
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | "frozen";
+  epicId: number;
   status: Status;
   comments: Comment[];
 }

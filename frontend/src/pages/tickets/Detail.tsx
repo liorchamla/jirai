@@ -20,6 +20,8 @@ function TicketDetail() {
   const [commentDialog, setCommentDialog] = useState<
     "update" | "delete" | null
   >(null);
+  const [loadingSummary, setLoadingSummary] = useState<boolean>(false);
+  const [commentsSummary, setCommentsSummary] = useState<string | null>(null);
 
   const { id } = useParams();
 
@@ -52,6 +54,33 @@ function TicketDetail() {
         severity: "error",
         summary: "Error",
         detail: "Une erreur s'est produite lors de la suppression du projet",
+      });
+    }
+  };
+
+  const fetchCommentsSummary = async () => {
+    try {
+      setLoadingSummary(true);
+      const response: { summary: string } = await getApi()
+        .get(`/ticket/${id}/summary`)
+        .json();
+      setCommentsSummary(response.summary.split("\n").join("<br />"));
+      setLoadingSummary(false);
+    } catch (error) {
+      setLoadingSummary(false);
+      // eslint-disable-next-line
+      console.error("Error fetching comments summary:", error);
+
+      // Afficher plus de détails sur l'erreur
+      let errorMessage = "Impossible de récupérer le résumé des commentaires.";
+      if (error && typeof error === "object" && "message" in error) {
+        errorMessage += ` Détail: ${error.message}`;
+      }
+
+      toast.current?.show({
+        severity: "error",
+        summary: "Erreur",
+        detail: errorMessage,
       });
     }
   };
@@ -105,12 +134,27 @@ function TicketDetail() {
             <div className="flex flex-col">
               <span className="text-2xl">Description</span>
               <div
-                className="mt-2 mb-7"
+                className="mt-2 mb-7 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-disc [&_ol]:ml-6 [&_li]:mb-1"
                 dangerouslySetInnerHTML={{
                   __html: DOMpurify.sanitize(ticket.description),
                 }}
               />
             </div>
+            {!commentsSummary && (
+              <Button
+                className="w-fit mt-4"
+                icon="pi pi-sparkles"
+                label="Résumé de la conversation"
+                loading={loadingSummary}
+                onClick={() => fetchCommentsSummary()}
+              />
+            )}
+            {commentsSummary && (
+              <div className="mt-4 p-2 border border-gray-300 rounded">
+                <h3 className="font-bold">Résumé de la conversation :</h3>
+                <p dangerouslySetInnerHTML={{ __html: commentsSummary }} />
+              </div>
+            )}
             {ticket.comments && ticket.comments.length > 0 && (
               <div className="flex flex-col gap-5">
                 {ticket.comments.map((comment) => (
