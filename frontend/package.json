@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && cp ./dist/index.html ./dist/200.html",
     "lint": "eslint .",
     "preview": "vite preview --port 5173",
     "format": "prettier --write ."
