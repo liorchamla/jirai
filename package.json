@@ -12,6 +12,7 @@
     "backend:dev": "pnpm --filter backend dev",
     "backend:test": "pnpm --filter backend test",
     "backend:build": "pnpm --filter backend build",
+    "backend:start": "pnpm --filter backend start",
     "e2e:run": "pnpm --filter e2e cypress:run",
     "e2e:open": "pnpm --filter e2e cypress:open",
     "prisma:validate": "pnpm --filter backend exec prisma validate",
@@ -28,7 +29,10 @@
     "format": "pnpm -r --parallel format",
     "lint": "pnpm -r --parallel lint",
     "build": "pnpm -r --parallel build",
-    "create:user": "pnpm --filter backend create-user"
+    "create:user": "pnpm --filter backend create-user",
+    "create:user:prod": "pnpm --filter backend create-user --username \"$USERNAME\" --email \"$EMAIL\" --position \"$POSITION\" --password \"$PASSWORD\"",
+    "db:seed-status": "pnpm --filter backend db:seed-status",
+    "render:build": "pnpm prisma:migrate:deploy && pnpm prisma:generate && pnpm create:user:prod && pnpm db:seed-status"
   },
   "keywords": [],
   "author": "",
