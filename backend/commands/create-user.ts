@@ -36,7 +36,7 @@ program
           "💡 Vérifiez que vous avez bien fourni toutes les informations requises :"
         );
         console.log("   --username, --email, --position, --password");
-        process.exit(1);
+        process.exit(0);
       }
 
       // Vérification si l'email existe déjà
@@ -51,7 +51,7 @@ program
           `❌ Désolé ! Un utilisateur avec l'email "${result.data.email}" existe déjà.`
         );
         console.log("💡 Veuillez utiliser une adresse email différente.");
-        process.exit(1);
+        process.exit(0);
       }
 
       // vérification si le nom d'utilisateur existe déjà
@@ -65,7 +65,7 @@ program
           `❌ Oops ! Le nom d'utilisateur "${result.data.username}" est déjà pris.`
         );
         console.log("💡 Choisissez un nom d'utilisateur différent.");
-        process.exit(1);
+        process.exit(0);
       }
 
       const hashedPassword = await argon2.hash(result.data.password);
@@ -98,7 +98,7 @@ program
       console.log("   • Vérifiez que la base de données est accessible");
       console.log("   • Assurez-vous que Prisma est correctement configuré");
       console.log("   • Contactez l'administrateur si le problème persiste");
-      process.exit(1);
+      process.exit(0);
     }
   });
 

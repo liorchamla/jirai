@@ -9,13 +9,14 @@
     "dev": "tsx --watch src/index.ts",
     "lint": "eslint .",
     "build": "prisma generate && tsc",
-    "start": "node dist/index.js",
+    "start": "tsx src/index.ts",
     "format": "prettier --write .",
     "create-user": "tsx commands/create-user.ts",
     "create-status": "tsx commands/create-status.ts",
     "prisma:migrate:test": "dotenv -e .env.test -- prisma migrate deploy",
     "prisma:migrate:reset:test": "dotenv -e .env.test -- prisma migrate reset",
-    "db:seed": "tsx commands/seed.ts"
+    "db:seed": "tsx commands/seed.ts",
+    "db:seed-status": "tsx commands/seed-status.ts"
   },
   "keywords": [],
   "author": "",
