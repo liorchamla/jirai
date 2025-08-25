@@ -16,7 +16,15 @@ function PriorityBadge({ priority }: { priority: string }) {
 
   return (
     <span className={`p-1 text-white rounded w-fit ${getBadgeClass()}`}>
-      {priority}
+      {priority === "frozen"
+        ? "Gelée"
+        : priority === "low"
+          ? "Basse"
+          : priority === "medium"
+            ? "Moyenne"
+            : priority === "high"
+              ? "Haute"
+              : priority}
     </span>
   );
 }

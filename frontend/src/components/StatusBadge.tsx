@@ -1,3 +1,5 @@
+import { Tooltip } from "primereact/tooltip";
+
 function StatusBadge({ name }: { name: string }) {
   const getIcon = () => {
     switch (name) {
@@ -15,7 +17,32 @@ function StatusBadge({ name }: { name: string }) {
         return "pi pi-question-circle";
     }
   };
-  return <span>{getIcon() && <i className={`${getIcon()} mr-1`} />}</span>;
+
+  const getStatusLabel = () => {
+    switch (name) {
+      case "thinking":
+        return "En réflexion";
+      case "ready":
+        return "Prêt";
+      case "in_progress":
+        return "En cours";
+      case "done":
+        return "Terminé";
+      case "canceled":
+        return "Annulé";
+      default:
+        return "Statut inconnu";
+    }
+  };
+
+  return (
+    <>
+      <span data-pr-tooltip={getStatusLabel()} data-pr-position="top">
+        {getIcon() && <i className={`${getIcon()} mr-1`} />}
+      </span>
+      <Tooltip target="[data-pr-tooltip]" />
+    </>
+  );
 }
 
 export default StatusBadge;

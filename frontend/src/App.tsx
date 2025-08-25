@@ -1,8 +1,10 @@
 import "./App.css";
 import Header from "./components/Header";
-import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext, useAuth } from "./utils/auth";
 
+import Home from "./pages/Home";
 import Login from "./pages/users/Login";
 import UsersList from "./pages/users/UsersList";
 import ProjectsList from "./pages/projects/ProjectsList";
@@ -14,22 +16,89 @@ import EpicDetail from "./pages/epics/Detail";
 import TicketDetail from "./pages/tickets/Detail";
 
 function App() {
-  const { userInfo, authenticate } = useAuth();
+  const { userInfo, authenticate, logout, updateUserInfo } = useAuth();
 
   return (
-    <AuthContext.Provider value={{ userInfo, authenticate }}>
+    <AuthContext.Provider
+      value={{ userInfo, authenticate, logout, updateUserInfo }}
+    >
       <Header />
       <main>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/users" element={<UsersList />} />
-          <Route path="/users/:uuid" element={<UserDetail />} />
-          <Route path="/projects" element={<ProjectsList />} />
-          <Route path="/projects/:slug" element={<ProjectDetail />} />
-          <Route path="/teams" element={<TeamsList />} />
-          <Route path="/teams/:slug" element={<TeamDetail />} />
-          <Route path="/projects/:slug/epics/:id" element={<EpicDetail />} />
-          <Route path="/ticket/:id" element={<TicketDetail />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute>
+                <UsersList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users/:uuid"
+            element={
+              <ProtectedRoute>
+                <UserDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <ProjectsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:slug"
+            element={
+              <ProtectedRoute>
+                <ProjectDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teams"
+            element={
+              <ProtectedRoute>
+                <TeamsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teams/:slug"
+            element={
+              <ProtectedRoute>
+                <TeamDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:slug/epics/:id"
+            element={
+              <ProtectedRoute>
+                <EpicDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ticket/:id"
+            element={
+              <ProtectedRoute>
+                <TicketDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
     </AuthContext.Provider>

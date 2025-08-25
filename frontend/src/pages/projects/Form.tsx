@@ -17,9 +17,10 @@ import { Editor } from "primereact/editor";
 interface PropsType {
   project?: Project;
   onSubmit: () => void;
+  onCancel?: () => void;
 }
 
-function ProjectForm({ project, onSubmit }: PropsType) {
+function ProjectForm({ project, onSubmit, onCancel }: PropsType) {
   const [name, setName] = useState(project?.name || "");
   const [description, setDescription] = useState(project?.description || "");
   const [status, setStatus] = useState(project?.status || "active");
@@ -160,66 +161,147 @@ function ProjectForm({ project, onSubmit }: PropsType) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
-      <label htmlFor="name">Nom du projet</label>
-      <InputText
-        id="name"
-        placeholder="Nom du projet"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      {errorName.length > 0 && (
-        <Message
-          severity="error"
-          text={errorName.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      <label htmlFor="description">Description</label>
-      <Editor
-        id="description"
-        placeholder="Description du projet"
-        value={description}
-        onTextChange={(e) => setDescription(e.htmlValue || "")}
-      />
-      {errorDescription.length > 0 && (
-        <Message
-          severity="error"
-          text={errorDescription.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      <label htmlFor="status">Statut</label>
-      <Dropdown
-        value={status}
-        options={[
-          { label: "Active", value: "active" },
-          { label: "Archived", value: "archived" },
-        ]}
-        onChange={(e) => {
-          setStatus(e.value);
-        }}
-      />
-      <label htmlFor="teams">Équipes</label>
-      <MultiSelect
-        id="teams"
-        value={projectTeams}
-        onChange={(e: MultiSelectChangeEvent) => setProjectTeams(e.value)}
-        options={teams}
-        optionLabel="name"
-        filter
-        display="chip"
-        placeholder="Équipes"
-        className="mb-4"
-      />
-      {error && (
-        <Message severity="error" text={error} className="w-full mb-5" />
-      )}
-      <Button
-        type="submit"
-        label={project ? "Mettre à jour le projet" : "Créer le projet"}
-      />
-    </form>
+    <div className="max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* En-tête avec icône */}
+        <div className="text-center pb-4 border-b border-gray-200">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+            <i className="pi pi-folder text-blue-600 text-xl"></i>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {project ? "Modifier le projet" : "Créer un nouveau projet"}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {project
+              ? "Modifiez les informations de votre projet"
+              : "Définissez les objectifs et paramètres de votre projet"}
+          </p>
+        </div>
+
+        {/* Section Nom */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <i className="pi pi-tag text-blue-600"></i>
+            <label htmlFor="name" className="text-sm font-medium text-gray-700">
+              Nom du projet <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <InputText
+            id="name"
+            placeholder="Ex: Application mobile, Site e-commerce, etc."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full"
+          />
+          {errorName.length > 0 && (
+            <Message
+              severity="error"
+              text={errorName.join(", ")}
+              className="w-full mt-2"
+            />
+          )}
+        </div>
+
+        {/* Section Description */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <i className="pi pi-file-edit text-green-600"></i>
+            <label
+              htmlFor="description"
+              className="text-sm font-medium text-gray-700"
+            >
+              Description <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <Editor
+            id="description"
+            placeholder="Décrivez les objectifs, le contexte et les enjeux de votre projet..."
+            value={description}
+            onTextChange={(e) => setDescription(e.htmlValue || "")}
+            style={{ height: "200px" }}
+          />
+          {errorDescription.length > 0 && (
+            <Message
+              severity="error"
+              text={errorDescription.join(", ")}
+              className="w-full mt-2"
+            />
+          )}
+        </div>
+
+        {/* Section Configuration - Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Statut */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <i className="pi pi-flag text-purple-600"></i>
+              <label
+                htmlFor="status"
+                className="text-sm font-medium text-gray-700"
+              >
+                Statut
+              </label>
+            </div>
+            <Dropdown
+              id="status"
+              value={status}
+              options={[
+                { label: "Actif", value: "active" },
+                { label: "Archivé", value: "archived" },
+              ]}
+              onChange={(e) => {
+                setStatus(e.value);
+              }}
+              className="w-full"
+            />
+          </div>
+
+          {/* Équipes */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <i className="pi pi-users text-orange-600"></i>
+              <label
+                htmlFor="teams"
+                className="text-sm font-medium text-gray-700"
+              >
+                Équipes assignées
+              </label>
+            </div>
+            <MultiSelect
+              id="teams"
+              value={projectTeams}
+              onChange={(e: MultiSelectChangeEvent) => setProjectTeams(e.value)}
+              options={teams}
+              optionLabel="name"
+              filter
+              display="chip"
+              placeholder="Sélectionner les équipes"
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        {/* Messages d'erreur globaux */}
+        {error && <Message severity="error" text={error} className="w-full" />}
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <Button
+            label="Annuler"
+            severity="secondary"
+            outlined
+            onClick={() => onCancel && onCancel()}
+            type="button"
+          />
+          <Button
+            type="submit"
+            label={project ? "Modifier le projet" : "Créer le projet"}
+            icon={project ? "pi pi-check" : "pi pi-plus"}
+            className="px-6 bg-blue-600 hover:bg-blue-700 border-blue-600"
+          />
+        </div>
+      </form>
+    </div>
   );
 }
 

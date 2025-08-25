@@ -20,6 +20,12 @@ export async function getAllProjects(req: Request, res: Response) {
           include: {
             status: true,
             comments: true,
+            tickets: {
+              include: {
+                status: true, // Include status information for each ticket
+                comments: true, // Include comments for each ticket
+              },
+            },
           },
         },
       }, // Include user information if needed
@@ -49,6 +55,12 @@ export async function getProjectBySlug(req: Request, res: Response) {
           include: {
             status: true,
             comments: true,
+            tickets: {
+              include: {
+                status: true, // Include status information for each ticket
+                comments: true, // Include comments for each ticket
+              },
+            },
           },
         },
       }, // Include user information if needed

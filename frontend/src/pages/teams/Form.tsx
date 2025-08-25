@@ -10,9 +10,10 @@ import { Message } from "primereact/message";
 interface PropsType {
   team?: Team;
   onSubmit: () => void;
+  onCancel?: () => void;
 }
 
-function TeamForm({ team, onSubmit }: PropsType) {
+function TeamForm({ team, onSubmit, onCancel }: PropsType) {
   const [name, setName] = useState(team?.name || "");
   const [errorName, setErrorName] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -102,29 +103,68 @@ function TeamForm({ team, onSubmit }: PropsType) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
-      <label htmlFor="name">Nom de l&apos;équipe</label>
-      <InputText
-        id="name"
-        placeholder="Nom de l'équipe"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      {errorName.length > 0 && (
-        <Message
-          severity="error"
-          text={errorName.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      {error && (
-        <Message severity="error" text={error} className="w-full mb-5" />
-      )}
-      <Button
-        type="submit"
-        label={team ? "Mettre à jour l'équipe" : "Créer l'équipe"}
-      />
-    </form>
+    <div className="max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* En-tête avec icône */}
+        <div className="text-center pb-4 border-b border-gray-200">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
+            <i className="pi pi-users text-green-600 text-xl"></i>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {team ? "Modifier l'équipe" : "Créer une nouvelle équipe"}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">
+            {team
+              ? "Modifiez les informations de votre équipe"
+              : "Définissez le nom et les paramètres de votre équipe"}
+          </p>
+        </div>
+
+        {/* Section Nom */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <i className="pi pi-tag text-blue-600"></i>
+            <label htmlFor="name" className="text-sm font-medium text-gray-700">
+              Nom de l&apos;équipe <span className="text-red-500">*</span>
+            </label>
+          </div>
+          <InputText
+            id="name"
+            placeholder="Ex: Équipe développement, Marketing, etc."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full"
+          />
+          {errorName.length > 0 && (
+            <Message
+              severity="error"
+              text={errorName.join(", ")}
+              className="w-full mt-2"
+            />
+          )}
+        </div>
+
+        {/* Messages d'erreur globaux */}
+        {error && <Message severity="error" text={error} className="w-full" />}
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <Button
+            label="Annuler"
+            severity="secondary"
+            outlined
+            onClick={() => onCancel && onCancel()}
+            type="button"
+          />
+          <Button
+            type="submit"
+            label={team ? "Modifier l'équipe" : "Créer l'équipe"}
+            icon={team ? "pi pi-check" : "pi pi-plus"}
+            className="px-6 bg-blue-600 hover:bg-blue-700 border-blue-600"
+          />
+        </div>
+      </form>
+    </div>
   );
 }
 

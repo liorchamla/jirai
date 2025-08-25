@@ -10,7 +10,8 @@ app.use(
     // origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     origin: (origin, callback) => {
       if (
-        origin?.endsWith(process.env.CORS_ORIGIN || "http://localhost:5173")
+        origin?.endsWith(process.env.CORS_ORIGIN || "http://localhost:5173") ||
+        origin === undefined
       ) {
         callback(null, origin);
       } else {

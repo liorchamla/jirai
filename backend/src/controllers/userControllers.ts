@@ -412,6 +412,49 @@ export async function deleteUser(req: Request, res: Response) {
   }
 }
 
+export async function getUsersByProject(req: Request, res: Response) {
+  const { slug } = req.params;
+
+  try {
+    // Je récupère le projet par son slug
+    // On inclut les équipes associées pour récupérer les utilisateurs
+    const project = await prisma.project.findUnique({
+      where: { slug },
+      include: {
+        teams: {
+          include: {
+            members: true, // Inclure les utilisateurs de chaque équipe
+          },
+        },
+      },
+    });
+    // Si le projet n'existe pas, on renvoie une erreur 404
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+    // On créait un tableau vide pour stocker les utilisateurs
+    const users: { uuid: string; username: string }[] = [];
+    const seenUuids = new Set<string>();
+    // On veut analyser chaque équipe (boucle)
+    // On ajoute les utilisateurs de chaque équipe au tableau
+    project.teams.forEach((team) => {
+      team.members.forEach((member) => {
+        if (!seenUuids.has(member.uuid)) {
+          users.push({ uuid: member.uuid, username: member.username });
+          seenUuids.add(member.uuid);
+        }
+      });
+    });
+    // On renvoie le tableau d'utilisateurs
+    res.status(200).json(users);
+  } catch (error) {
+    // En cas d'erreur lors de la récupération des utilisateurs, on renvoie une erreur 500
+    console.error("Error fetching users by project:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 /**
  * Vérifie si un email est déjà utilisé par un autre utilisateur dans la base.
  *

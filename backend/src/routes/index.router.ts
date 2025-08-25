@@ -6,6 +6,7 @@ import { router as epic } from "./epic.router";
 import { router as ticket } from "./ticket.router";
 import { router as comment } from "./comment.router";
 import { router as openai } from "./openai.router";
+import { router as status } from "./status.router";
 
 export const router = Router();
 
@@ -16,3 +17,4 @@ router.use(epic);
 router.use(ticket);
 router.use(comment);
 router.use(openai);
+router.use(status);

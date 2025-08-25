@@ -19,7 +19,7 @@ function Login() {
     event.preventDefault();
     try {
       await authContext.authenticate({ email, password });
-      navigate("/users");
+      navigate("/");
     } catch (error) {
       // eslint-disable-next-line
       console.error("Login error:", error);

@@ -4,20 +4,22 @@ import {
   MultiSelect,
   type MultiSelectChangeEvent,
 } from "primereact/multiselect";
-import { useEffect, useState, type FormEvent } from "react";
+import { useContext, useEffect, useState, type FormEvent } from "react";
 import type { User } from "../../types/User";
 import { useNavigate } from "react-router-dom";
 import { getApi } from "../../utils/api";
 import { Message } from "primereact/message";
 import type { WretchError } from "wretch";
 import type { Team } from "../../types/Team";
+import { AuthContext } from "../../utils/auth";
 
 interface PropsType {
   user?: User;
   onSubmit: () => void;
+  onCancel?: () => void;
 }
 
-function UserForm({ user, onSubmit }: PropsType) {
+function UserForm({ user, onSubmit, onCancel }: PropsType) {
   const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [position, setPosition] = useState(user?.position || "");
@@ -35,6 +37,7 @@ function UserForm({ user, onSubmit }: PropsType) {
   >(null);
 
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -157,9 +160,16 @@ function UserForm({ user, onSubmit }: PropsType) {
         .error(422, (err) => {
           handleApiError(err);
         })
-        .json()
+        .json<{ message: string; user: User }>()
         .then((result) => {
           if (result) {
+            // Si l'utilisateur modifie son propre profil, mettre à jour le contexte d'authentification
+            if (authContext?.userInfo?.uuid === result.user.uuid) {
+              authContext.updateUserInfo({
+                username: result.user.username,
+                email: result.user.email,
+              });
+            }
             onSubmit();
           }
         });
@@ -190,102 +200,208 @@ function UserForm({ user, onSubmit }: PropsType) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-5">
-      <label htmlFor="username">Nom d&#39;utilisateur</label>
-      <InputText
-        id="username"
-        type="text"
-        placeholder="Nom utilisateur"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      {errorUsername.length > 0 && (
-        <Message
-          severity="error"
-          text={errorUsername.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      <label htmlFor="email">Email</label>
-      <InputText
-        id="email"
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        invalid={errorEmail.length > 0}
-      />
-      {errorEmail.length > 0 && (
-        <Message
-          severity="error"
-          text={errorEmail.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      <label htmlFor="position">Position</label>
-      <InputText
-        id="position"
-        type="text"
-        placeholder="Position"
-        value={position}
-        onChange={(e) => setPosition(e.target.value)}
-      />
-      {errorPosition.length > 0 && (
-        <Message
-          severity="error"
-          text={errorPosition.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      <label htmlFor="teams">Équipes</label>
-      <MultiSelect
-        id="teams"
-        value={userTeams}
-        onChange={(e: MultiSelectChangeEvent) => setUserTeams(e.value)}
-        options={teams}
-        optionLabel="name"
-        filter
-        display="chip"
-        placeholder="Équipes"
-        className="mb-4"
-      />
-      <label htmlFor="password">Mot de passe</label>
-      <InputText
-        id="password"
-        type="password"
-        placeholder="Mot de passe"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="mb-4"
-      />
-      <label htmlFor="confirm-password">Confirmer le mot de passe</label>
-      <InputText
-        id="confirm-password"
-        type="password"
-        placeholder="Confirmation mot de passe"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        className="mb-4"
-      />
-      {errorPasswordConfirm && (
-        <Message
-          severity="error"
-          text={errorPasswordConfirm}
-          className="w-full mb-5"
-        />
-      )}
-      {errorPassword.length > 0 && (
-        <Message
-          severity="error"
-          text={errorPassword.join(", ")}
-          className="w-full mb-5"
-        />
-      )}
-      {error && (
-        <Message severity="error" text={error} className="w-full mb-5" />
-      )}
-      <Button label={user ? "Enregistrer" : "Ajouter"} type="submit" />
-    </form>
+    <div className="container mx-auto px-6 py-8 max-w-4xl">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <i className="pi pi-user text-3xl text-blue-600"></i>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {user ? "Modifier l'utilisateur" : "Nouvel utilisateur"}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            {user
+              ? "Modifiez les informations de l'utilisateur"
+              : "Créez un nouvel utilisateur"}
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Informations personnelles */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <i className="pi pi-user text-blue-600"></i>
+            Informations personnelles
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Nom d&apos;utilisateur
+              </label>
+              <InputText
+                id="username"
+                type="text"
+                placeholder="Nom utilisateur"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full"
+                invalid={errorUsername.length > 0}
+              />
+              {errorUsername.length > 0 && (
+                <Message
+                  severity="error"
+                  text={errorUsername.join(", ")}
+                  className="w-full mt-2"
+                />
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Email
+              </label>
+              <InputText
+                id="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full"
+                invalid={errorEmail.length > 0}
+              />
+              {errorEmail.length > 0 && (
+                <Message
+                  severity="error"
+                  text={errorEmail.join(", ")}
+                  className="w-full mt-2"
+                />
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="position"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Position
+              </label>
+              <InputText
+                id="position"
+                type="text"
+                placeholder="Position"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                className="w-full"
+                invalid={errorPosition.length > 0}
+              />
+              {errorPosition.length > 0 && (
+                <Message
+                  severity="error"
+                  text={errorPosition.join(", ")}
+                  className="w-full mt-2"
+                />
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="teams"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Équipes
+              </label>
+              <MultiSelect
+                id="teams"
+                value={userTeams}
+                onChange={(e: MultiSelectChangeEvent) => setUserTeams(e.value)}
+                options={teams}
+                optionLabel="name"
+                filter
+                display="chip"
+                placeholder="Sélectionner les équipes"
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Sécurité */}
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <i className="pi pi-lock text-blue-600"></i>
+            Sécurité
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {user ? "Nouveau mot de passe (optionnel)" : "Mot de passe"}
+              </label>
+              <InputText
+                id="password"
+                type="password"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full"
+                invalid={errorPassword.length > 0}
+              />
+              {errorPassword.length > 0 && (
+                <Message
+                  severity="error"
+                  text={errorPassword.join(", ")}
+                  className="w-full mt-2"
+                />
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Confirmer le mot de passe
+              </label>
+              <InputText
+                id="confirm-password"
+                type="password"
+                placeholder="Confirmation mot de passe"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full"
+                invalid={!!errorPasswordConfirm}
+              />
+              {errorPasswordConfirm && (
+                <Message
+                  severity="error"
+                  text={errorPasswordConfirm}
+                  className="w-full mt-2"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Messages d'erreur globaux */}
+        {error && <Message severity="error" text={error} className="w-full" />}
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
+          <Button
+            label="Annuler"
+            severity="secondary"
+            outlined
+            onClick={() => onCancel && onCancel()}
+            type="button"
+          />
+          <Button
+            label={user ? "Enregistrer" : "Créer l'utilisateur"}
+            icon={user ? "pi pi-save" : "pi pi-plus"}
+            type="submit"
+          />
+        </div>
+      </form>
+    </div>
   );
 }
 export default UserForm;

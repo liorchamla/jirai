@@ -10,3 +10,8 @@ router.post("/users", authenticateToken, userControllers.createUser);
 router.post("/login", userControllers.userLogin);
 router.patch("/users/:uuid", authenticateToken, userControllers.updateUser);
 router.delete("/users/:uuid", authenticateToken, userControllers.deleteUser);
+router.get(
+  "/projects/:slug/users",
+  authenticateToken,
+  userControllers.getUsersByProject
+);

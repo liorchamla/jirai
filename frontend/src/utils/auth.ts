@@ -9,7 +9,14 @@ export const AuthContext = createContext<{
     email: string;
     password: string;
   }) => Promise<void>;
-}>({ userInfo: null, authenticate: async () => {} });
+  logout: () => void;
+  updateUserInfo: (newUserInfo: Partial<JwtPayload>) => void;
+}>({
+  userInfo: null,
+  authenticate: async () => {},
+  logout: () => {},
+  updateUserInfo: () => {},
+});
 
 export const useAuth = () => {
   const [userInfo, setUserInfo] = useState<JwtPayload | null>(
@@ -29,9 +36,25 @@ export const useAuth = () => {
       setUserInfo(decodedInfo);
     }
   }
+
+  function logoutUser() {
+    window.localStorage.removeItem("token");
+    setToken("");
+    setUserInfo(null);
+  }
+
+  function updateUserInfo(newUserInfo: Partial<JwtPayload>) {
+    if (userInfo) {
+      const updatedUserInfo = { ...userInfo, ...newUserInfo };
+      setUserInfo(updatedUserInfo);
+    }
+  }
+
   return {
     userInfo,
     authenticate,
+    logout: logoutUser,
+    updateUserInfo,
   };
 };
 
