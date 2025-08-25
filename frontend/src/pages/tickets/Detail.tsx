@@ -6,7 +6,7 @@ import { Dialog } from "primereact/dialog";
 import PriorityBadge from "../../components/PriorityBadge";
 import TicketForm from "../tickets/TicketForm";
 import type { Ticket } from "../../types/Ticket";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import StatusBadge from "../../components/StatusBadge";
 import CommentForm from "../comments/CommentForm";
 import { AuthContext } from "../../utils/auth";
@@ -86,147 +86,238 @@ function TicketDetail() {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex flex-col shadow-2xl p-5 rounded-lg gap-[1rem] mt-9 w-[90%] mb-18">
-        {ticket && (
-          <>
-            <Button
-              className="w-fit"
-              icon="pi pi-pencil"
-              label="Modifier TICKET"
-              onClick={() => setDialog("update")}
-              size="small"
-            />
-            <Dialog
-              header="Modifier le TICKET"
-              visible={dialog === "update"}
-              style={{ width: "60vw" }}
-              onHide={() => setDialog(null)}
-            >
-              <TicketForm
-                ticket={ticket}
-                onSubmit={() => {
-                  setDialog(null);
-                  fetchTicket();
-                }}
-              />
-            </Dialog>
-            <div className="flex flex-row justify-between items-center mb-6">
-              <div className="flex flex-col">
-                <span className="text-2xl">
-                  TICKET :{" "}
-                  <span className="text-gray-400 font-bold">
-                    {ticket.title}
-                  </span>
-                </span>
-                <div className="mt-2">
+    <div className="container mx-auto px-6 py-8">
+      {ticket ? (
+        <>
+          {/* En-tête avec navigation */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <NavLink
+                    to="/projects"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <i className="pi pi-arrow-left"></i> Retour aux projets
+                  </NavLink>
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {ticket.title}
+                </h1>
+                <div className="flex items-center gap-2 mb-3">
                   <StatusBadge name={ticket.status.name} />
-                  <span className="p-1 text-white rounded w-fit bg-gray-300">
-                    {ticket.status.name}
-                  </span>
+                  <PriorityBadge priority={ticket.priority} />
+                </div>
+                {/* Informations créateur et assignation */}
+                <div className="flex items-center gap-6 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <i className="pi pi-user"></i>
+                    <span>
+                      Créé par <strong>{ticket.creator.username}</strong>
+                    </span>
+                  </div>
+                  {ticket.assignee ? (
+                    <div className="flex items-center gap-2">
+                      <i className="pi pi-users"></i>
+                      <span>
+                        Assigné à <strong>{ticket.assignee.username}</strong>
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-orange-600">
+                      <i className="pi pi-exclamation-triangle"></i>
+                      <span>Non assigné</span>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-2xl">Priorité</span>
-                <PriorityBadge priority={ticket.priority} />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl">Description</span>
-              <div
-                className="mt-2 mb-7 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-disc [&_ol]:ml-6 [&_li]:mb-1"
-                dangerouslySetInnerHTML={{
-                  __html: DOMpurify.sanitize(ticket.description),
-                }}
-              />
-            </div>
-            {!commentsSummary && (
               <Button
-                className="w-fit mt-4"
-                icon="pi pi-sparkles"
-                label="Résumé de la conversation"
-                loading={loadingSummary}
-                onClick={() => fetchCommentsSummary()}
+                icon="pi pi-pencil"
+                label="Modifier le TICKET"
+                onClick={() => setDialog("update")}
+                className="bg-green-600 hover:bg-green-700 text-white border-green-600"
               />
-            )}
-            {commentsSummary && (
-              <div className="mt-4 p-2 border border-gray-300 rounded">
-                <h3 className="font-bold">Résumé de la conversation :</h3>
-                <p dangerouslySetInnerHTML={{ __html: commentsSummary }} />
-              </div>
-            )}
-            {ticket.comments && ticket.comments.length > 0 && (
-              <div className="flex flex-col gap-5">
-                {ticket.comments.map((comment) => (
-                  <article key={comment.id}>
-                    <header className="font-bold flex items-center">
-                      <span className="align-top">
-                        {comment.creator.username},{" "}
-                        <span className="text-sm text-gray-500 mr-1">
-                          {new Date(comment.createdAt).toLocaleString("fr-FR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </span>
-                      {comment.creator.uuid === userInfo?.uuid && (
-                        <>
-                          <Button
-                            icon="pi pi-pencil"
-                            className="ml-2 p-button-text p-0 h-auto"
-                            severity="success"
-                            size="small"
-                            onClick={() => {
-                              setSelectedComment(comment);
-                              setCommentDialog("update");
-                            }}
-                          />
-                          <Button
-                            icon="pi pi-trash"
-                            className="ml-1 p-button-text p-0 h-auto"
-                            severity="danger"
-                            size="small"
-                            onClick={() => {
-                              setSelectedComment(comment);
-                              setDialog("deleteComment");
-                            }}
-                          />
-                        </>
-                      )}
-                    </header>
-                    {commentDialog === "update" &&
-                    selectedComment?.id === comment.id ? (
-                      <CommentForm
-                        comment={selectedComment}
-                        onSubmit={() => {
-                          setCommentDialog(null);
-                          fetchTicket(); // Rafraîchir les données du ticket pour afficher le commentaire
-                        }}
-                      />
-                    ) : (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMpurify.sanitize(comment.content),
-                        }}
-                      />
-                    )}
-                  </article>
-                ))}
-              </div>
-            )}
+            </div>
+          </div>
 
-            <CommentForm
-              ticket={ticket}
-              onSubmit={() => {
-                fetchTicket(); // Rafraîchir les données du ticket pour afficher le nouveau commentaire
+          {/* Description */}
+          <div className="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Description du TICKET
+            </h2>
+            <div
+              className="text-gray-700 prose max-w-none [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-disc [&_ol]:ml-6 [&_li]:mb-1"
+              dangerouslySetInnerHTML={{
+                __html: DOMpurify.sanitize(ticket.description),
               }}
             />
-          </>
-        )}
-      </div>
+          </div>
+
+          {/* Résumé IA et Commentaires */}
+          <div className="bg-white rounded-lg shadow mb-8">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Discussion
+                </h2>
+                {!commentsSummary &&
+                  ticket.comments &&
+                  ticket.comments.length > 0 && (
+                    <Button
+                      icon="pi pi-sparkles"
+                      label="Résumé IA"
+                      loading={loadingSummary}
+                      onClick={() => fetchCommentsSummary()}
+                      className="bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                      size="small"
+                      outlined
+                    />
+                  )}
+              </div>
+            </div>
+            <div className="p-6">
+              {commentsSummary && (
+                <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <h3 className="font-semibold text-purple-900 mb-2 flex items-center">
+                    <i className="pi pi-sparkles mr-2"></i>
+                    Résumé de la conversation
+                  </h3>
+                  <div
+                    className="text-purple-800"
+                    dangerouslySetInnerHTML={{ __html: commentsSummary }}
+                  />
+                </div>
+              )}
+
+              {ticket.comments && ticket.comments.length > 0 ? (
+                <div className="space-y-6">
+                  {ticket.comments.map((comment) => (
+                    <article
+                      key={comment.id}
+                      className="border border-gray-200 rounded-lg p-4"
+                    >
+                      <header className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-gray-900">
+                            {comment.creator.username}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {new Date(comment.createdAt).toLocaleString(
+                              "fr-FR",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                        {comment.creator.uuid === userInfo?.uuid && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              icon="pi pi-pencil"
+                              severity="success"
+                              text
+                              size="small"
+                              onClick={() => {
+                                setSelectedComment(comment);
+                                setCommentDialog("update");
+                              }}
+                              tooltip="Modifier"
+                            />
+                            <Button
+                              icon="pi pi-trash"
+                              severity="danger"
+                              text
+                              size="small"
+                              onClick={() => {
+                                setSelectedComment(comment);
+                                setDialog("deleteComment");
+                              }}
+                              tooltip="Supprimer"
+                            />
+                          </div>
+                        )}
+                      </header>
+                      {commentDialog === "update" &&
+                      selectedComment?.id === comment.id ? (
+                        <CommentForm
+                          comment={selectedComment}
+                          onSubmit={() => {
+                            setCommentDialog(null);
+                            fetchTicket();
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="text-gray-700 prose max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: DOMpurify.sanitize(comment.content),
+                          }}
+                        />
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <i className="pi pi-comment text-4xl text-gray-300 mb-4"></i>
+                  <p className="text-gray-500">
+                    Aucun commentaire pour le moment
+                  </p>
+                </div>
+              )}
+
+              {/* Formulaire d'ajout de commentaire */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <CommentForm
+                  ticket={ticket}
+                  onSubmit={() => {
+                    fetchTicket();
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="text-center py-12">
+          <i className="pi pi-ticket text-6xl text-gray-300 mb-4"></i>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Ticket introuvable
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Le ticket que vous recherchez n&apos;existe pas ou a été supprimé
+          </p>
+          <NavLink
+            to="/projects"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <i className="pi pi-arrow-left mr-2"></i>
+            Retour aux projets
+          </NavLink>
+        </div>
+      )}
+
+      {/* Dialogs */}
+      <Dialog
+        header="Modifier le TICKET"
+        visible={dialog === "update"}
+        style={{ width: "60vw" }}
+        onHide={() => setDialog(null)}
+      >
+        <TicketForm
+          ticket={ticket}
+          onSubmit={() => {
+            setDialog(null);
+            fetchTicket();
+          }}
+          onCancel={() => setDialog(null)}
+        />
+      </Dialog>
+
       <Dialog
         header="Supprimer commentaire"
         visible={dialog === "deleteComment"}
@@ -236,7 +327,7 @@ function TicketDetail() {
         }}
       >
         <div className="flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-4">
+          <h2 className="text-lg font-semibold mb-4 text-center">
             Êtes-vous sûr de vouloir supprimer ce commentaire?
           </h2>
           <div className="flex gap-2">
@@ -249,14 +340,11 @@ function TicketDetail() {
                 }
               }}
             />
-            <Button
-              label="Annuler"
-              className="mt-2"
-              onClick={() => setDialog(null)}
-            />
+            <Button label="Annuler" onClick={() => setDialog(null)} />
           </div>
         </div>
       </Dialog>
+
       <Toast ref={toast} position="top-right" />
     </div>
   );

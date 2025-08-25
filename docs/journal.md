@@ -243,3 +243,31 @@
 - Mise en place d'états de chargement (`loadingSummary`, `loadingDescription`) avec indicateurs visuels pour améliorer l'expérience utilisateur pendant les appels à l'API OpenAI.
 - Respect des bonnes pratiques de sécurité : toutes les interactions avec OpenAI passent exclusivement par le backend, les clés API ne sont jamais exposées côté frontend.
 - Prompts optimisés pour générer des descriptions au format HTML avec formatage riche (gras, listes, couleurs) directement intégrables dans l'éditeur PrimeReact.
+
+## 27. Déploiement Backend et Frontend
+
+- Préparation du déploiement avec création du script `render-build.sh` pour automatiser le processus de build sur Render :
+  - Installation des dépendances avec `pnpm install`
+  - Build du backend avec compilation TypeScript
+  - Génération du client Prisma
+  - Exécution des migrations de base de données avec `prisma migrate deploy`
+- Configuration des scripts de déploiement dans le `package.json` racine :
+  - `prisma:migrate:deploy` pour déployer les migrations en production
+  - `create:user:prod` pour créer un utilisateur administrateur initial en production via variables d'environnement
+  - `db:seed-status` pour initialiser les statuts par défaut (thinking, doing, done, canceled)
+  - `render:build` qui combine toutes les étapes nécessaires au déploiement
+- Mise en place de la gestion des variables d'environnement pour la production :
+  - Backend : `DATABASE_URL`, `OPENAI_API_KEY`, `PORT` pour la configuration serveur
+  - Frontend : `VITE_API_URL` pour pointer vers l'API backend déployée
+- Configuration du frontend pour le déploiement :
+  - Fichier `_redirects` dans `public/` pour gérer le routing côté client avec les SPA (`/* /index.html 200`)
+  - Variable d'environnement `VITE_API_URL` pour adapter l'URL de l'API selon l'environnement (dev/prod)
+- Création du script CLI `create-user.ts` pour l'initialisation d'un utilisateur administrateur en production :
+  - Validation des paramètres avec Zod (`createUserOnCommandSchema`)
+  - Vérification de l'unicité de l'email et du nom d'utilisateur
+  - Hashage sécurisé du mot de passe avec Argon2
+  - Messages d'erreur détaillés et gestion robuste des cas d'échec
+- Architecture de déploiement recommandée :
+  - Backend déployé sur Render/Railway/Fly.io avec base de données PostgreSQL
+  - Frontend déployé sur Vercel/Netlify avec configuration des variables d'environnement
+  - Séparation des environnements dev/staging/production avec variables spécifiques

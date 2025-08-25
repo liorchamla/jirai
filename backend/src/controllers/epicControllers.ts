@@ -12,6 +12,7 @@ export async function getAllEpics(req: Request, res: Response) {
     const epics = await prisma.epic.findMany({
       include: {
         creator: true,
+        assignee: true, // Include assignee information
         tickets: {
           include: {
             status: true, // Include status information for each ticket
@@ -50,6 +51,7 @@ export async function getEpicById(req: Request, res: Response) {
           where: { id },
           include: {
             creator: true, // Include user information if needed
+            assignee: true, // Include assignee information
             tickets: {
               include: {
                 status: true, // Include status information for each ticket
