@@ -11,3 +11,7 @@ export interface Project {
   teams: Team[];
   epics: Epic[];
 }
+
+export interface DetailProject {
+  project?: Project;
+}

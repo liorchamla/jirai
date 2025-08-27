@@ -13,6 +13,7 @@ import {
 } from "primereact/multiselect";
 import type { Team } from "../../types/Team";
 import { Editor } from "primereact/editor";
+import { fetchTeams as apiFetchTeams } from "../../api/teams";
 
 interface PropsType {
   project?: Project;
@@ -37,10 +38,8 @@ function ProjectForm({ project, onSubmit, onCancel }: PropsType) {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = (await getApi().get("/teams").json()) as {
-          teams: Team[];
-        };
-        setTeams(response.teams);
+        const response = await apiFetchTeams();
+        setTeams(response);
       } catch (error) {
         // eslint-disable-next-line
         console.error("Erreur lors du chargement des équipes:", error);
@@ -162,7 +161,11 @@ function ProjectForm({ project, onSubmit, onCancel }: PropsType) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form
+        data-testid="project-form"
+        onSubmit={handleSubmit}
+        className="space-y-6"
+      >
         {/* En-tête avec icône */}
         <div className="text-center pb-4 border-b border-gray-200">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
