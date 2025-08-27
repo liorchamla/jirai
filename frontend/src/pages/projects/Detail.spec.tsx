@@ -1,11 +1,13 @@
 import { describe, it, vi, beforeEach, expect, afterEach } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import ProjectDetail from "./Detail";
-import { fetchProjectDetail } from "../../api/projects";
+import * as projectsApi from "../../api/projects";
+import * as teamsApi from "../../api/teams";
+import * as usersApi from "../../api/users";
+import * as statusApi from "../../api/status";
 import { BrowserRouter } from "react-router-dom";
-import { fetchTeams } from "../../api/teams";
-import { fetchUsersByProject } from "../../api/users";
-import { fetchEpicStatus } from "../../api/status";
+import "@testing-library/jest-dom/vitest";
+import type { DetailProject } from "../../types/Project";
 
 // Y a t il des librairies qui nous aides pour tester des composants react ?
 // Comment faire en sorte que le test soit isolé et ne depende pas d'une api externe ?
@@ -13,7 +15,7 @@ import { fetchEpicStatus } from "../../api/status";
 
 // Mock de l'API pour contrôler les données
 
-const MOCK_PROJECT_RESPONSE = {
+const MOCK_PROJECT_RESPONSE: DetailProject = {
   project: {
     slug: "l-etrange-noel-de-jack",
     name: "L'étrange Noël de Jack",
@@ -1268,22 +1270,6 @@ const MOCK_STATUS_RESPONSE = [
   },
 ];
 
-vi.mock("../../api/projects", () => ({
-  fetchProjectDetail: vi.fn(),
-}));
-
-vi.mock("../../api/teams", () => ({
-  fetchTeams: vi.fn(),
-}));
-
-vi.mock("../../api/users", () => ({
-  fetchUsersByProject: vi.fn(),
-}));
-
-vi.mock("../../api/status", () => ({
-  fetchEpicStatus: vi.fn(),
-}));
-
 describe("Project Detail Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -1296,7 +1282,9 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
     render(
       <BrowserRouter>
@@ -1320,7 +1308,9 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
     render(
       <BrowserRouter>
@@ -1334,10 +1324,9 @@ describe("Project Detail Page", () => {
     );
     const totalTickets = await screen.findByTestId("ticket-count");
     expect(totalTickets).toHaveTextContent(
-      MOCK_PROJECT_RESPONSE.project.epics.reduce(
-        (acc, epic) => acc + (epic.tickets?.length || 0),
-        0
-      ) || 0
+      MOCK_PROJECT_RESPONSE.project.epics
+        .reduce((acc, epic) => acc + (epic.tickets?.length || 0), 0)
+        .toString() || "0"
     );
     const totalComments = await screen.findByTestId("comment-count");
     expect(totalComments).toHaveTextContent(
@@ -1355,7 +1344,9 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
     render(
       <BrowserRouter>
@@ -1374,7 +1365,9 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
     render(
       <BrowserRouter>
@@ -1393,9 +1386,13 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
-    fetchTeams.mockResolvedValue(MOCK_TEAMS_RESPONSE.teams);
+    vi.spyOn(teamsApi, "fetchTeams").mockResolvedValue(
+      MOCK_TEAMS_RESPONSE.teams
+    );
 
     render(
       <BrowserRouter>
@@ -1412,11 +1409,17 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockResolvedValue(MOCK_PROJECT_RESPONSE);
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockResolvedValue(
+      MOCK_PROJECT_RESPONSE
+    );
 
-    fetchUsersByProject.mockResolvedValue(MOCK_USERS_RESPONSE);
+    vi.spyOn(usersApi, "fetchUsersByProject").mockResolvedValue(
+      MOCK_USERS_RESPONSE
+    );
 
-    fetchEpicStatus.mockResolvedValue(MOCK_STATUS_RESPONSE);
+    vi.spyOn(statusApi, "fetchEpicStatus").mockResolvedValue(
+      MOCK_STATUS_RESPONSE
+    );
 
     render(
       <BrowserRouter>
@@ -1433,7 +1436,9 @@ describe("Project Detail Page", () => {
     // Données de test pour un projet
 
     // On configure l'API pour retourner notre projet fictif
-    fetchProjectDetail.mockRejectedValueOnce(new Error("Not Found"));
+    vi.spyOn(projectsApi, "fetchProjectDetail").mockRejectedValueOnce(
+      new Error("Not Found")
+    );
 
     render(
       <BrowserRouter>

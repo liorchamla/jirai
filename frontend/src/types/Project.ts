@@ -6,6 +6,8 @@ export interface Project {
   slug: string;
   name: string;
   description: string;
+  createdAt?: string;
+  updatedAt?: string;
   creator: User;
   status: "active" | "archived";
   teams: Team[];
@@ -13,5 +15,5 @@ export interface Project {
 }
 
 export interface DetailProject {
-  project?: Project;
+  project: Project;
 }

@@ -8,12 +8,14 @@ export interface Epic {
   title: string;
   description: string;
   createdBy: string;
-  creator: User;
+  createdAt?: string;
+  creator?: User;
   assignedTo: string | null; // UUID of user assigned to the epic
   assignee?: User | null;
   priority: "high" | "medium" | "low" | "frozen";
   projectSlug: string;
   status: Status;
+  statusId?: number;
   tickets: Ticket[];
   comments: Comment[];
   updatedAt?: string;

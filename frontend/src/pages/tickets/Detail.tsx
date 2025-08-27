@@ -113,7 +113,7 @@ function TicketDetail() {
                   <div className="flex items-center gap-2">
                     <i className="pi pi-user"></i>
                     <span>
-                      Créé par <strong>{ticket.creator.username}</strong>
+                      Créé par <strong>{ticket.creator?.username}</strong>
                     </span>
                   </div>
                   {ticket.assignee ? (
@@ -199,7 +199,7 @@ function TicketDetail() {
                       <header className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-900">
-                            {comment.creator.username}
+                            {comment.creator?.username}
                           </span>
                           <span className="text-sm text-gray-500">
                             {new Date(comment.createdAt).toLocaleString(
@@ -214,7 +214,7 @@ function TicketDetail() {
                             )}
                           </span>
                         </div>
-                        {comment.creator.uuid === userInfo?.uuid && (
+                        {comment.creator?.uuid === userInfo?.uuid && (
                           <div className="flex items-center gap-1">
                             <Button
                               icon="pi pi-pencil"

@@ -112,7 +112,7 @@ function EpicDetail() {
                   <div className="flex items-center gap-2">
                     <i className="pi pi-user"></i>
                     <span>
-                      Créé par <strong>{epic.creator.username}</strong>
+                      Créé par <strong>{epic.creator?.username}</strong>
                     </span>
                   </div>
                   {epic.assignee ? (
@@ -278,7 +278,7 @@ function EpicDetail() {
                       <header className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-900">
-                            {comment.creator.username}
+                            {comment.creator?.username}
                           </span>
                           <span className="text-sm text-gray-500">
                             {new Date(comment.createdAt).toLocaleString(
@@ -293,7 +293,7 @@ function EpicDetail() {
                             )}
                           </span>
                         </div>
-                        {comment.creator.uuid === userInfo?.uuid && (
+                        {comment.creator?.uuid === userInfo?.uuid && (
                           <div className="flex items-center gap-1">
                             <Button
                               icon="pi pi-pencil"
