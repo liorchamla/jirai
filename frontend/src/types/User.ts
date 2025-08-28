@@ -3,9 +3,11 @@ import type { Team } from "./Team";
 export interface User {
   uuid: string;
   username: string;
+  createdAt?: string;
+  updatedAt?: string;
   email: string;
   position: string;
-  teams: Team[];
+  teams?: Team[];
 }
 
 export interface JwtPayload {

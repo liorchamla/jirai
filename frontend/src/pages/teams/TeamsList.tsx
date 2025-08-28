@@ -159,7 +159,7 @@ function TeamsList() {
                           {team.name}
                         </Link>
                       </div>
-                      {team.creator.uuid === userInfo?.uuid && (
+                      {team.creator?.uuid === userInfo?.uuid && (
                         <div className="flex space-x-1">
                           <Button
                             onClick={() => {
@@ -188,7 +188,7 @@ function TeamsList() {
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-500">Créateur:</span>
                         <span className="font-medium">
-                          {team.creator.username}
+                          {team.creator?.username}
                         </span>
                       </div>
                     </div>

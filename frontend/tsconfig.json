@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "types": ["@testing-library/jest-dom"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["Package/Front/src/*"],

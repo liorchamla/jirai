@@ -12,6 +12,8 @@ import { Message } from "primereact/message";
 import { Editor } from "primereact/editor";
 import { Toast } from "primereact/toast";
 import type { Toast as ToastType } from "primereact/toast";
+import { fetchUsersByProject } from "../../api/users";
+import { fetchEpicStatus } from "../../api/status";
 
 interface PropsType {
   project?: Project;
@@ -99,9 +101,7 @@ function EpicForm({ project, epic, onSubmit, onCancel }: PropsType) {
     try {
       const projectSlug = project?.slug || epic?.projectSlug;
       if (projectSlug) {
-        const usersData: { uuid: string; username: string }[] = await getApi()
-          .get(`/projects/${projectSlug}/users`)
-          .json();
+        const usersData = await fetchUsersByProject(projectSlug);
         setUsers(usersData);
         return usersData;
       }
@@ -121,7 +121,7 @@ function EpicForm({ project, epic, onSubmit, onCancel }: PropsType) {
   // Récupérer les statuts
   const fetchStatuses = async () => {
     try {
-      const statusesData: Status[] = await getApi().get("/status").json();
+      const statusesData: Status[] = await fetchEpicStatus();
       setStatuses(statusesData);
       return statusesData;
     } catch (error) {
@@ -289,7 +289,11 @@ function EpicForm({ project, epic, onSubmit, onCancel }: PropsType) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form
+        data-testid="epic-form"
+        onSubmit={handleSubmit}
+        className="space-y-6"
+      >
         {/* En-tête avec icône */}
         <div className="text-center pb-4 border-b border-gray-200">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">

@@ -6,8 +6,14 @@ export interface Project {
   slug: string;
   name: string;
   description: string;
+  createdAt?: string;
+  updatedAt?: string;
   creator: User;
   status: "active" | "archived";
   teams: Team[];
   epics: Epic[];
+}
+
+export interface DetailProject {
+  project: Project;
 }

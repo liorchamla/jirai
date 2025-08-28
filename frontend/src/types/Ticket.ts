@@ -9,12 +9,14 @@ export interface Ticket {
   description: string;
   priority: "high" | "medium" | "low" | "frozen";
   epicId: number;
-  epic: Epic;
+  epic?: Epic;
   createdBy: string;
-  creator: User;
+  createdAt?: string;
+  creator?: User;
   assignedTo: string | null; // UUID of user assigned to the ticket
   assignee?: User | null;
   status: Status;
+  statusId?: number;
   comments: Comment[];
   updatedAt?: string;
 }
