@@ -7,7 +7,8 @@ import DOMpurify from "dompurify";
 import { Dialog } from "primereact/dialog";
 import ProjectForm from "./Form";
 import { Toast } from "primereact/toast";
-import { getApi } from "../../utils/api";
+import ProjectStatus from "./ProjectStatus";
+import { deleteProject } from "../../api/projects";
 
 interface ProjectCardProps {
   project: Project;
@@ -31,14 +32,13 @@ export default function ProjectCard({
 
   const toast = useRef<Toast>(null);
 
-  const handleDelete = (project: Project) => {
-    setSelectedProject(project);
+  const handleDelete = () => {
     setDialog("delete");
   };
 
-  const handleConfirmDelete = async (project: Project) => {
+  const handleConfirmDelete = async () => {
     try {
-      await getApi().delete(`/projects/${project.slug}`).res();
+      await deleteProject(project.slug);
       setDialog(null);
       onProjectDeleted(); // Rafraîchir la liste
       toast.current?.show({
@@ -73,15 +73,7 @@ export default function ProjectCard({
                 {project.name}
               </Link>
               <div className="mt-2">
-                <span
-                  className={`px-2 py-1 text-xs rounded-full ${
-                    project.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {project.status === "active" ? "Actif" : "Archivé"}
-                </span>
+                <ProjectStatus status={project.status} />
               </div>
             </div>
             {project.creator.uuid === userInfo?.uuid && (
@@ -91,6 +83,7 @@ export default function ProjectCard({
                     setSelectedProject(project);
                     setDialog("update");
                   }}
+                  data-testid="edit-button"
                   icon="pi pi-pencil"
                   severity="success"
                   text
@@ -98,9 +91,10 @@ export default function ProjectCard({
                   tooltip="Modifier"
                 />
                 <Button
+                  data-testid="delete-button"
                   icon="pi pi-times"
                   severity="danger"
-                  onClick={() => handleDelete(project)}
+                  onClick={() => handleDelete()}
                   text
                   size="small"
                   tooltip="Supprimer"
@@ -121,7 +115,9 @@ export default function ProjectCard({
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-500">EPIC:</span>
-              <span className="font-medium">{project.epics?.length || 0}</span>
+              <span data-testid="epic-count" className="font-medium">
+                {project.epics?.length || 0}
+              </span>
             </div>
 
             <div className="flex items-center justify-between text-sm">
@@ -137,6 +133,7 @@ export default function ProjectCard({
                 <div className="flex flex-wrap gap-1 mb-2">
                   {project.teams.map((team) => (
                     <span
+                      data-testid="team-name"
                       key={team.slug}
                       className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
                     >
@@ -151,6 +148,7 @@ export default function ProjectCard({
           <div className="pt-3 border-t border-gray-200 mt-auto">
             <Button
               onClick={() => navigate(`/projects/${project.slug}`)}
+              data-testid="view-project-button"
               icon="pi pi-arrow-right"
               label="Voir le projet"
               text
@@ -181,19 +179,21 @@ export default function ProjectCard({
         style={{ width: "30vw" }}
         onHide={() => setDialog(null)}
       >
-        <div className="flex flex-col items-center">
+        <div
+          data-testid="delete-confirm"
+          className="flex flex-col items-center"
+        >
           <h2 className="text-lg font-semibold mb-4 text-center">
             Êtes-vous sûr de vouloir supprimer le projet &quot;
             {selectedProject?.name}&quot; ?
           </h2>
           <div className="flex gap-2">
             <Button
+              data-testid="confirm-delete-button"
               label="Confirmer"
               severity="danger"
               onClick={() => {
-                if (selectedProject) {
-                  handleConfirmDelete(selectedProject);
-                }
+                handleConfirmDelete();
               }}
             />
             <Button label="Annuler" onClick={() => setDialog(null)} />

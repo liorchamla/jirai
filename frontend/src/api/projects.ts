@@ -10,3 +10,7 @@ export function fetchProjectDetail(
 export function fetchProjects(): Promise<{ projects: Project[] }> {
   return getApi().get("/projects").json();
 }
+
+export function deleteProject(projectSlug: string): Promise<void> {
+  return getApi().delete(`/projects/${projectSlug}`).res();
+}
